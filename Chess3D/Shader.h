@@ -1,4 +1,3 @@
-#pragma once
 
 // THIS CLASS IS BASED ON: https://learnopengl.com/Getting-started/Shaders
 
