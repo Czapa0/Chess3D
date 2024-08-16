@@ -32,6 +32,9 @@ public:
     string directory;
     bool gammaCorrection;
 
+    // default constructror
+    Model() = default;
+
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false);
 
