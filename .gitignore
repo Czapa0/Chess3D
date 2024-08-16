@@ -33,3 +33,6 @@
 
 # Others
 *.vs
+
+# Exceptions
+!*ChessBoard*.obj
