@@ -69,7 +69,6 @@ int SceneManager::arrange() {
     // === SHADERS ===
     m_flatShader = Shader("shaders/flat.vert", "shaders/flat.frag");
 
-
     // === DATA ===
     if (loadModels()) {
         std::cerr << "Error loading models" << std::endl;
@@ -109,12 +108,14 @@ int SceneManager::run() {
 void SceneManager::renderScene() {
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
     glm::mat4 view = m_camera.GetViewMatrix();
+    glm::mat4 model = glm::mat4(1.0f);
 
     Shader* shader = &m_flatShader;
 
     shader->use();
     shader->setMat4("projMatrix", projection);
     shader->setMat4("viewMatrix", view);
+    shader->setMat4("modelMatrix", model);
     shader->setVec3("cameraPos", m_camera.Position);
 
     // marching cubes for pattern

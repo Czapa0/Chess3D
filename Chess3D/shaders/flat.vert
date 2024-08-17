@@ -10,6 +10,7 @@ uniform Material material;
 
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_specular0;
+uniform sampler2D texture_ambient0;
 
 #define MAX_DIR_LIGHT 5
 struct DirLight {
@@ -53,12 +54,11 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
-layout(location = 0) in vec3 pos;
-layout(location = 3) in vec3 aPos;
-layout(location = 4) in vec3 aNormal;
-layout(location = 5) in vec2 aTexCoord;
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aNormal;
+layout(location = 2) in vec2 aTexCoord;
 
-flat out vec4 OutColor;
+out vec4 VertColor;
 
 vec3 CalcDirLight(DirLight light, vec3 V, vec3 texel, vec3 N);
 vec3 CalcPointLight(PointLight light, vec3 V, vec3 texel, vec3 N, vec3 P);
@@ -68,7 +68,7 @@ void main() {
     // vertex part
 	vec3 worldPos = vec3(modelMatrix * vec4(aPos, 1.0));
     vec3 worldNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
-    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 
     // fragment part
     vec3 finalColor = vec3(0.0, 0.0, 0.0);
@@ -78,7 +78,7 @@ void main() {
     finalColor = texel;
     finalColor = clamp(finalColor, 0.0, 1.0);
 
-    OutColor = vec4(finalColor, 1.0);
+    VertColor = vec4(finalColor, 1.0);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 V, vec3 color, vec3 N) {

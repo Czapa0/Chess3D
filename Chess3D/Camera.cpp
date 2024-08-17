@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 // Default camera values
-constexpr auto SPEED_SLOW = 0.5f;
+constexpr auto SPEED_SLOW = 100.5f;
 constexpr auto SPEED_FAST = 3.0f;
 constexpr auto SENSITIVITY = 0.1f;
 constexpr auto ZOOM = 45.0f;
