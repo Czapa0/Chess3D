@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 
-SceneManager::SceneManager() : m_camera(), m_title("Chess3D") {}
+SceneManager::SceneManager() : m_camera(), m_title("Chess3D") {
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(0.0f, 0.0f, 10.0f), 1.0, 0.045, 0.0075);
+}
 
 int SceneManager::init() {
     glfwInit();
@@ -117,6 +119,25 @@ void SceneManager::renderScene() {
     shader->setMat4("viewMatrix", view);
     shader->setMat4("modelMatrix", model);
     shader->setVec3("cameraPos", m_camera.Position);
+
+    // material
+    shader->setVec3("material.ambient", m_chessBoard.material.ambient);
+    shader->setVec3("material.diffuse", m_chessBoard.material.diffuse);
+    shader->setVec3("material.specular", m_chessBoard.material.specular);
+    shader->setFloat("material.shininess", m_chessBoard.material.shininess);
+
+    // point lights
+    for (int i = 0; i < m_pointLights.size(); i++) {
+        std::string light = "pointLights[" + std::to_string(i) + "]";
+        shader->setVec3(light + ".ambient", m_pointLights[i].ambient);
+        shader->setVec3(light + ".diffuse", m_pointLights[i].diffuse);
+        shader->setVec3(light + ".specular", m_pointLights[i].specular);
+        shader->setVec3(light + ".position", m_pointLights[i].position);
+        shader->setFloat(light + ".k0", m_pointLights[i].constant);
+        shader->setFloat(light + ".k1", m_pointLights[i].linear);
+        shader->setFloat(light + ".k2", m_pointLights[i].quadratic);
+    }
+    shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
 
     // marching cubes for pattern
     m_chessBoard.Draw(*shader);

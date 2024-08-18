@@ -147,8 +147,8 @@
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\flat.frag" />
-    <None Include="shaders\flat.vert" />
+    <None Include="shaders\goroud.frag" />
+    <None Include="shaders\goroud.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

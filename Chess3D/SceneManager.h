@@ -9,6 +9,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "WindowMode.h"
+#include "Light.h"
 
 class SceneManager
 {
@@ -19,6 +20,9 @@ public:
 private:
 	// === SHADERS ===
 	Shader m_flatShader;
+
+	// === LIGHTS & MATERIAL ===
+	std::vector<PointLight> m_pointLights;
 
 	// === WINDOW ===
 	GLFWwindow* m_window = nullptr;

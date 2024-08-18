@@ -1,6 +1,6 @@
 #include "Model.h"
 
-Model::Model(string const& path, bool gamma) : gammaCorrection(gamma)
+Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
 }
@@ -11,15 +11,15 @@ void Model::Draw(Shader& shader)
         meshes[i].Draw(shader);
 }
 
-void Model::loadModel(string const& path)
+void Model::loadModel(std::string const& path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
-        cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
+        std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
         return;
     }
     // retrieve the directory path of the filepath
@@ -50,9 +50,9 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
-    vector<Vertex> vertices;
-    vector<unsigned int> indices;
-    vector<Texture> textures;
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -96,7 +96,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
     }
     // process materials
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
     // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
     // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
     // Same applies to other texture as the following list summarizes:
@@ -104,23 +104,34 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // specular: texture_specularN
     // normal: texture_normalN
 
+    float shininess;
+    aiColor3D diffuse, ambient, specular;
+    // 0. shininess
+    aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &shininess);
+    material.shininess = shininess;
     // 1. diffuse maps
-    vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<Texture> diffuseMaps = loadMaterialTextures(mat, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+    material.diffuse = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
     // 2. specular maps
-    vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<Texture> specularMaps = loadMaterialTextures(mat, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    mat->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+    material.specular = glm::vec3(specular.r, specular.g, specular.b);
     // 3. ambient maps
-    std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ambient");
-    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    std::vector<Texture> ambientMaps = loadMaterialTextures(mat, aiTextureType_AMBIENT, "texture_ambient");
+    textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
+    mat->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+    material.ambient = glm::vec3(ambient.r, ambient.g, ambient.b);
 
     // return a mesh object created from the extracted mesh data
     return Mesh(vertices, indices, textures);
 }
 
-vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-    vector<Texture> textures;
+    std::vector<Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
@@ -150,9 +161,9 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
     return textures;
 }
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
+unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
 {
-    string filename = string(path);
+    std::string filename(path);
     filename = directory + '\\' + filename;
 
     unsigned int textureID;
