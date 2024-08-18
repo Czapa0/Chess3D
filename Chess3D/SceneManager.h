@@ -10,16 +10,22 @@
 #include "Camera.h"
 #include "WindowMode.h"
 #include "Light.h"
+#include "Callbacks.h"
 
 class SceneManager
 {
+	friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+	friend void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
+	friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+	friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+	friend void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 public:
 	SceneManager();
 	int init();
 	int run();
 private:
 	// === SHADERS ===
-	Shader m_flatShader;
+	Shader m_goroudShader;
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
@@ -42,6 +48,9 @@ private:
 	float m_lastYPull = m_height / 2.0f;
 	bool m_pull = false;
 	bool m_firstMouse = true;
+
+	float m_range = 10.0f;
+	float m_step = 1.0f;
 
 	float m_accumTime = 0.0f;
 	float m_deltaTime = 0.0f;

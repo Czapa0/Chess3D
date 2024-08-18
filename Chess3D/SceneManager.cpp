@@ -19,11 +19,10 @@ int SceneManager::init() {
         return 1;
     }
     glfwMakeContextCurrent(m_window);
-    //glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-    //glfwSetCursorPosCallback(m_window, cursor_pos_callback);
-    //glfwSetMouseButtonCallback(m_window, mouse_button_callback);
-    //glfwSetScrollCallback(m_window, scroll_callback);
-    //glfwSetKeyCallback(m_window, key_callback);
+    glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(m_window, cursor_pos_callback);
+    glfwSetMouseButtonCallback(m_window, mouse_button_callback);
+    glfwSetKeyCallback(m_window, key_callback);
     glfwSetWindowUserPointer(m_window, this);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -69,7 +68,7 @@ void SceneManager::moveCamera() {
 
 int SceneManager::arrange() {
     // === SHADERS ===
-    m_flatShader = Shader("shaders/flat.vert", "shaders/flat.frag");
+    m_goroudShader = Shader("shaders/goroud.vert", "shaders/goroud.frag");
 
     // === DATA ===
     if (loadModels()) {
@@ -112,7 +111,7 @@ void SceneManager::renderScene() {
     glm::mat4 view = m_camera.GetViewMatrix();
     glm::mat4 model = glm::mat4(1.0f);
 
-    Shader* shader = &m_flatShader;
+    Shader* shader = &m_goroudShader;
 
     shader->use();
     shader->setMat4("projMatrix", projection);

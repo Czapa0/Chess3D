@@ -63,6 +63,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="Callbacks.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="Callbacks.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
   </ItemGroup>
