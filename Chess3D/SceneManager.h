@@ -26,6 +26,7 @@ public:
 private:
 	// === SHADERS ===
 	Shader m_goroudShader;
+	Shader m_depthShader;
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
@@ -67,6 +68,7 @@ private:
 	int loadModels();
 	void moveCamera();
 	// void renderUI();
+	void renderPointLightDepthMap(const PointLight& light);
 	void renderScene();
 	// void renderPointLightMenu();
 	// void youSpinMeRound();

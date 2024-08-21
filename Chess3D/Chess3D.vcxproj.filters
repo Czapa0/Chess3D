@@ -103,5 +103,14 @@
     <None Include="shaders\goroud.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\depth.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\depth.geom">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\depth.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

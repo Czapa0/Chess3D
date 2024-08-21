@@ -35,6 +35,7 @@ out vec4 Ambient;
 out vec4 Diffuse;
 out vec4 Specular;
 out vec2 TexCoords;
+out vec3 FragPos;
 
 struct Light{
     vec3 ambient;
@@ -48,6 +49,7 @@ void main() {
     // vertex part
     TexCoords = aTexCoord;
 	vec3 worldPos = vec3(modelMatrix * vec4(aPos, 1.0));
+    FragPos = worldPos;
     vec3 worldNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 

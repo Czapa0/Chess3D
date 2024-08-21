@@ -30,6 +30,10 @@ int SceneManager::init() {
         return 1;
     }
 
+    for (PointLight& light : m_pointLights) {
+        light.init();
+    }
+
     //IMGUI_CHECKVERSION();
     //ImGui::CreateContext();
     //ImGuiIO& io = ImGui::GetIO();
@@ -69,6 +73,7 @@ void SceneManager::moveCamera() {
 int SceneManager::arrange() {
     // === SHADERS ===
     m_goroudShader = Shader("shaders/goroud.vert", "shaders/goroud.frag");
+    m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag", "shaders/depth.geom");
 
     // === DATA ===
     if (loadModels()) {
@@ -97,6 +102,9 @@ int SceneManager::run() {
         glClearColor(m_backgroundColor.at(0), m_backgroundColor.at(1), m_backgroundColor.at(2), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        for (const PointLight& light : m_pointLights) {
+            renderPointLightDepthMap(light);
+        }
         renderScene();
 
         glfwSwapBuffers(m_window);
@@ -105,11 +113,32 @@ int SceneManager::run() {
     return terminate();
 }
 
+void SceneManager::renderPointLightDepthMap(const PointLight& light)
+{
+    // TODO: use render scene
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, light.depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_depthShader.use();
+    for (unsigned int i = 0; i < 6; ++i)
+        m_depthShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", light.shadowTransformataions[i]);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(0.1));
+    m_depthShader.setMat4("modelMatrix", model);
+    m_depthShader.setFloat("farPlane", FAR_PLANE_PL);
+    m_depthShader.setVec3("lightPos", light.position);
+    m_chessBoard.Draw(m_depthShader);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void SceneManager::renderScene() {
+    glViewport(0, 0, m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
     glm::mat4 view = m_camera.GetViewMatrix();
     glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(0.1));
 
     Shader* shader = &m_goroudShader;
 
@@ -125,20 +154,25 @@ void SceneManager::renderScene() {
     shader->setVec3("material.specular", m_chessBoard.material.specular);
     shader->setFloat("material.shininess", m_chessBoard.material.shininess);
 
-    // point lights
+    // point lights TODO: better management
     for (int i = 0; i < m_pointLights.size(); i++) {
         std::string light = "pointLights[" + std::to_string(i) + "]";
         shader->setVec3(light + ".ambient", m_pointLights[i].ambient);
         shader->setVec3(light + ".diffuse", m_pointLights[i].diffuse);
         shader->setVec3(light + ".specular", m_pointLights[i].specular);
         shader->setVec3(light + ".position", m_pointLights[i].position);
+        shader->setVec3("ligthPosition", m_pointLights[i].position);
         shader->setFloat(light + ".k0", m_pointLights[i].constant);
         shader->setFloat(light + ".k1", m_pointLights[i].linear);
         shader->setFloat(light + ".k2", m_pointLights[i].quadratic);
+        shader->setFloat("farPlane", FAR_PLANE_PL);
     }
     shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_pointLights[0].depthCubeMap);
 
-    // marching cubes for pattern
+    // draw scene
     m_chessBoard.Draw(*shader);
 }
 

@@ -2,6 +2,14 @@
 #define LIGHT_H
 
 #include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+#include <array>
+
+constexpr unsigned int SHADOW_WIDTH = 1024;
+constexpr unsigned int SHADOW_HEIGHT = 1024;
+
+constexpr float NEAR_PLANE_PL = 1.0f;
+constexpr float FAR_PLANE_PL = 35.0f;
 
 struct Light {
     glm::vec3 ambient;
@@ -21,6 +29,10 @@ struct PointLight : Light {
     float linear;
     float quadratic;
 
+    std::array<glm::mat4, 6> shadowTransformataions;
+    unsigned int depthMapFBO;
+    unsigned int depthCubeMap;
+
     PointLight() = default;
     PointLight(glm::vec3 ambient,
         glm::vec3 diffuse,
@@ -29,6 +41,10 @@ struct PointLight : Light {
         float constant,
         float linear,
         float quadratic);
+    void init();
+
+private:
+    void initShadowTransformations();
 };
 
 struct SpotLight : PointLight {

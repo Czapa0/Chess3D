@@ -149,6 +149,9 @@
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\depth.frag" />
+    <None Include="shaders\depth.geom" />
+    <None Include="shaders\depth.vert" />
     <None Include="shaders\goroud.frag" />
     <None Include="shaders\goroud.vert" />
   </ItemGroup>
