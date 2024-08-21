@@ -50,8 +50,7 @@ int SceneManager::init() {
 int SceneManager::loadModels() {
     // TODO: maybe add some error checking in model class
     // === CHESSBOARD ===
-    // TODO: relative path
-    m_chessBoard = Model("C:\\Users\\maksc\\source\\repos\\GK1\\Projekt_4\\Chess3D\\Chess3D\\WoodenChessBoard_v1_L3.123cf3414759-151a-4f2d-be41-f4e663d384e3\\12938_WoodenChessBoard_v1_l3.obj");
+    m_chessBoard = Model("WoodenChessBoard_v1_L3.123cf3414759-151a-4f2d-be41-f4e663d384e3/12938_WoodenChessBoard_v1_l3.obj");
     return 0;
 }
 
