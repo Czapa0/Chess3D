@@ -31,11 +31,13 @@ layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 
-out vec4 Ambient;
-out vec4 Diffuse;
-out vec4 Specular;
-out vec2 TexCoords;
-out vec3 FragPos;
+out struct {
+    vec4 Ambient;
+    vec4 Diffuse;
+    vec4 Specular;
+    vec2 TexCoords;
+    vec3 FragPos;
+} OutVert;
 
 struct Light{
     vec3 ambient;
@@ -47,9 +49,9 @@ Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
 
 void main() {
     // vertex part
-    TexCoords = aTexCoord;
+    OutVert.TexCoords = aTexCoord;
 	vec3 worldPos = vec3(modelMatrix * vec4(aPos, 1.0));
-    FragPos = worldPos;
+    OutVert.FragPos = worldPos;
     vec3 worldNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 
@@ -65,9 +67,9 @@ void main() {
         finalColor.specular += l.specular;
     }
 
-    Ambient = vec4(finalColor.ambient, 1.0);
-    Diffuse = vec4(finalColor.diffuse, 1.0);
-    Specular = vec4(finalColor.specular, 1.0);
+    OutVert.Ambient = vec4(finalColor.ambient, 1.0);
+    OutVert.Diffuse = vec4(finalColor.diffuse, 1.0);
+    OutVert.Specular = vec4(finalColor.specular, 1.0);
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {

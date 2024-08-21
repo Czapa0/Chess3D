@@ -1,12 +1,13 @@
 ﻿#version 330 core
 out vec4 FragColor;
 
-// TODO: struct for in/out
-in vec4 Ambient;
-in vec4 Diffuse;
-in vec4 Specular;
-in vec2 TexCoords;
-in vec3 FragPos;
+in struct {
+    vec4 Ambient;
+    vec4 Diffuse;
+    vec4 Specular;
+    vec2 TexCoords;
+    vec3 FragPos;
+} OutVert;
 
 uniform samplerCube depthMap; // TODO: array for point lights
 uniform sampler2D texture_diffuse0;
@@ -20,8 +21,11 @@ float ShadowCalculation(vec3 fragPos);
 
 void main()
 {
-    float shadow = ShadowCalculation(FragPos);
-    vec4 color = (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * Diffuse + texture(texture_ambient0, TexCoords) * Ambient + (1 - shadow) * Specular;
+    float shadow = ShadowCalculation(OutVert.FragPos);
+    vec4 color = 
+        (1.0 - shadow) * texture(texture_diffuse0, OutVert.TexCoords) * OutVert.Diffuse + 
+        texture(texture_ambient0, OutVert.TexCoords) * OutVert.Ambient + 
+        (1 - shadow) * OutVert.Specular;
     color = clamp(color, 0.0, 1.0);
     FragColor = color;
 }
