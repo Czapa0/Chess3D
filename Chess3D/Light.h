@@ -33,8 +33,6 @@ struct PointLight : Light {
     float quadratic;
 
     std::array<glm::mat4, 6> shadowTransformataions;
-    unsigned int depthMapFBO;
-    unsigned int depthCubeMap;
 
     PointLight() = default;
     PointLight(glm::vec3 ambient,
@@ -44,10 +42,6 @@ struct PointLight : Light {
         float constant,
         float linear,
         float quadratic);
-    void init();
-
-private:
-    void initShadowTransformations();
 };
 
 struct SpotLight : PointLight {

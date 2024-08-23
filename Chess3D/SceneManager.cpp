@@ -32,10 +32,6 @@ int SceneManager::init() {
 
     initShadowMapping();
 
-    for (PointLight& light : m_pointLights) {
-        light.init();
-    }
-
     //IMGUI_CHECKVERSION();
     //ImGui::CreateContext();
     //ImGuiIO& io = ImGui::GetIO();
@@ -69,7 +65,7 @@ void SceneManager::initShadowMapping()
 
     // assign 2D texture to each face of the cube
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
-    glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, m_pointLights.size() * 6);
+    glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_DEPTH_COMPONENT24, SHADOW_WIDTH, SHADOW_HEIGHT, m_pointLights.size() * 6);
 
     // texture parameters
     glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -80,9 +76,13 @@ void SceneManager::initShadowMapping()
 
     // bind depth cube to FBO as depth attatchment
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
-    //glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+
+    auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -150,8 +150,8 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
     // TODO: use render scene
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, light.depthMapFBO);
-    //glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
+    //glBindFramebuffer(GL_FRAMEBUFFER, light.depthMapFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
 
     glClear(GL_DEPTH_BUFFER_BIT);
     m_depthShader.use();
@@ -159,13 +159,12 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
     model = glm::scale(model, glm::vec3(0.1));
     m_depthShader.setMat4("modelMatrix", model);
     m_depthShader.setVec3("lightPos", light.position);
+    m_depthShader.setFloat("farPlane", FAR_PLANE_PL);
 
     for (unsigned int i = 0; i < 6; i++)
     {
-        // GLenum face =  light.id * 6 + i;
-        GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, face, light.depthCubeMap, 0);
-        //glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
+        GLenum face =  light.id * 6 + i;
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
         auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
@@ -215,7 +214,6 @@ void SceneManager::renderScene() {
     shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, m_pointLights[0].depthCubeMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
 
     // draw scene
