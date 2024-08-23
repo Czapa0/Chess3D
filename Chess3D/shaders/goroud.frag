@@ -1,4 +1,4 @@
-﻿#version 330 core
+﻿#version 450 core
 out vec4 FragColor;
 
 in struct {
@@ -10,6 +10,7 @@ in struct {
 } OutVert;
 
 uniform samplerCube depthMap; // TODO: array for point lights
+//uniform samplerCubeArray depthMap;
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_ambient0;
 
@@ -37,6 +38,7 @@ float ShadowCalculation(vec3 fragPos)
     vec3 fragToLight = fragPos - ligthPosition;
     // ise the fragment to light vector to sample from the depth map    
     float closestDepth = texture(depthMap, fragToLight).r;
+//    float closestDepth = texture(depthMap, vec4(fragToLight, 0)).r;
     // it is currently in linear range between [0,1], let's re-transform it back to original depth value
     closestDepth *= farPlane;
     // now get current linear depth as the length between the fragment and light position

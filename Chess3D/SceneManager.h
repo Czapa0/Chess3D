@@ -30,6 +30,8 @@ private:
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
+	unsigned int m_depthCubeMapArrayFBO;
+	unsigned int m_depthCubeMapArray;
 
 	// === WINDOW ===
 	GLFWwindow* m_window = nullptr;
@@ -66,6 +68,7 @@ private:
 	// === METHODS ===
 	int arrange();
 	int loadModels();
+	void initShadowMapping();
 	void moveCamera();
 	// void renderUI();
 	void renderPointLightDepthMap(const PointLight& light);

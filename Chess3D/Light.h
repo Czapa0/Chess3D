@@ -23,6 +23,9 @@ struct Light {
 };
 
 struct PointLight : Light {
+    static unsigned int pointLightCount;
+    unsigned int id;
+
     glm::vec3 position;
 
     float constant;

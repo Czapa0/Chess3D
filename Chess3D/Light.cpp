@@ -10,6 +10,8 @@ Light::Light(glm::vec3 ambient,
     diffuse(diffuse),
     specular(specular) { }
 
+unsigned int PointLight::pointLightCount = 0;
+
 PointLight::PointLight(glm::vec3 ambient,
     glm::vec3 diffuse,
     glm::vec3 specular,
@@ -18,7 +20,7 @@ PointLight::PointLight(glm::vec3 ambient,
     float linear,
     float quadratic) :
     Light(ambient, diffuse, specular),
-    position(position), constant(constant), linear(linear), quadratic(quadratic) {}
+    id(pointLightCount++), position(position), constant(constant), linear(linear), quadratic(quadratic) {}
 
 void PointLight::init()
 {
