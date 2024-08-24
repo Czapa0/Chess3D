@@ -163,7 +163,6 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
     m_depthShader.setFloat("farPlane", FAR_PLANE_PL);
 
     for (int i = 0; i < 6; i++)
-    //for (int i = 5; i >= 0; --i)
     {
         GLenum face = light.id * 6 + i;
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
