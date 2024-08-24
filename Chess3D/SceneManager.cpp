@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : m_camera(), m_title("Chess3D") {
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(5.0f, 3.0f, 3.0f), 1.0, 0.045, 0.0075);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(0.0f, 0.0f, 5.0f), 1.0, 0.045, 0.0075);
 }
 
@@ -161,9 +162,10 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
     m_depthShader.setVec3("lightPos", light.position);
     m_depthShader.setFloat("farPlane", FAR_PLANE_PL);
 
-    for (unsigned int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
+    //for (int i = 5; i >= 0; --i)
     {
-        GLenum face =  light.id * 6 + i;
+        GLenum face = light.id * 6 + i;
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
         auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
@@ -172,6 +174,7 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
         m_chessBoard.Draw(m_depthShader);
     }
 
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -205,12 +208,11 @@ void SceneManager::renderScene() {
         shader->setVec3(light + ".diffuse", m_pointLights[i].diffuse);
         shader->setVec3(light + ".specular", m_pointLights[i].specular);
         shader->setVec3(light + ".position", m_pointLights[i].position);
-        shader->setVec3("ligthPosition", m_pointLights[i].position);
         shader->setFloat(light + ".k0", m_pointLights[i].constant);
         shader->setFloat(light + ".k1", m_pointLights[i].linear);
         shader->setFloat(light + ".k2", m_pointLights[i].quadratic);
-        shader->setFloat("farPlane", FAR_PLANE_PL);
     }
+    shader->setFloat("farPlane", FAR_PLANE_PL);
     shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
