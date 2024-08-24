@@ -33,12 +33,12 @@ int SceneManager::init() {
 
     initShadowMapping();
 
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-    //ImGui_ImplOpenGL3_Init();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+    ImGui_ImplOpenGL3_Init();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -127,10 +127,14 @@ int SceneManager::run() {
         std::ostringstream ss;
         ss << "[";
         ss.precision(0);
-        ss << std::fixed << 2137; // TODO: add FPS
+        ss << std::fixed << ImGui::GetIO().Framerate; // TODO: add FPS
         ss << " FPS] " << m_title;
         glfwSetWindowTitle(m_window, ss.str().c_str());
         moveCamera();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         glClearColor(m_backgroundColor.at(0), m_backgroundColor.at(1), m_backgroundColor.at(2), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,6 +144,8 @@ int SceneManager::run() {
         }
         renderScene();
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(m_window);
         glfwPollEvents();
     }
