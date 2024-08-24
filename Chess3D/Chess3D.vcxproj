@@ -146,13 +146,14 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShadingType.h" />
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\depth.frag" />
     <None Include="shaders\depth.vert" />
-    <None Include="shaders\goroud.frag" />
-    <None Include="shaders\goroud.vert" />
+    <None Include="shaders\gouraud.frag" />
+    <None Include="shaders\gouraud.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

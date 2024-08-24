@@ -95,12 +95,15 @@
     <ClInclude Include="Callbacks.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
+    <ClInclude Include="ShadingType.h">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\goroud.frag">
+    <None Include="shaders\gouraud.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\goroud.vert">
+    <None Include="shaders\gouraud.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\depth.frag">

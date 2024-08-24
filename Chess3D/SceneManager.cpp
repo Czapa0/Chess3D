@@ -103,9 +103,29 @@ void SceneManager::moveCamera() {
     }
 }
 
+void SceneManager::renderUI()
+{
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(250, 750));
+    ImGui::Begin("Control Panel", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+    ImGui::BeginGroup();
+    ImGui::Text("Shading");
+    if (ImGui::RadioButton("Flat", m_shadingType == ShadingType::Flat)) {
+        m_shadingType = ShadingType::Flat;
+    }
+    if (ImGui::RadioButton("Gouraud", m_shadingType == ShadingType::Gouraud)) {
+        m_shadingType = ShadingType::Gouraud;
+    }
+    if (ImGui::RadioButton("Phong", m_shadingType == ShadingType::Phong)) {
+        m_shadingType = ShadingType::Phong;
+    }
+    ImGui::EndGroup();
+    ImGui::End();
+}
+
 int SceneManager::arrange() {
     // === SHADERS ===
-    m_goroudShader = Shader("shaders/goroud.vert", "shaders/goroud.frag");
+    m_gouraudShader = Shader("shaders/gouraud.vert", "shaders/gouraud.frag");
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
 
     // === DATA ===
@@ -143,6 +163,7 @@ int SceneManager::run() {
             renderPointLightDepthMap(light);
         }
         renderScene();
+        renderUI();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -192,7 +213,7 @@ void SceneManager::renderScene() {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(0.1));
 
-    Shader* shader = &m_goroudShader;
+    Shader* shader = &m_gouraudShader;
 
     shader->use();
     shader->setMat4("projMatrix", projection);

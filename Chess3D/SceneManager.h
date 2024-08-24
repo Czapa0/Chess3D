@@ -13,6 +13,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "WindowMode.h"
+#include "ShadingType.h"
 #include "Light.h"
 #include "Callbacks.h"
 
@@ -29,7 +30,8 @@ public:
 	int run();
 private:
 	// === SHADERS ===
-	Shader m_goroudShader;
+	ShadingType m_shadingType = ShadingType::Gouraud;
+	Shader m_gouraudShader;
 	Shader m_depthShader;
 
 	// === LIGHTS & MATERIAL ===
@@ -74,7 +76,7 @@ private:
 	int loadModels();
 	void initShadowMapping();
 	void moveCamera();
-	// void renderUI();
+	void renderUI();
 	void renderPointLightDepthMap(const PointLight& light);
 	void renderScene();
 	// void renderPointLightMenu();
