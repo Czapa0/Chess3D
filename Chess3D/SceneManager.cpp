@@ -126,6 +126,7 @@ void SceneManager::renderUI()
 int SceneManager::arrange() {
     // === SHADERS ===
     m_gouraudShader = Shader("shaders/gouraud.vert", "shaders/gouraud.frag");
+    m_phongShader = Shader("shaders/phong.vert", "shaders/phong.frag");
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
 
     // === DATA ===
@@ -213,7 +214,20 @@ void SceneManager::renderScene() {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(0.1));
 
-    Shader* shader = &m_gouraudShader;
+    Shader* shader = &m_phongShader;
+    switch (m_shadingType)
+    {
+    case ShadingType::Flat:
+        break;
+    case ShadingType::Gouraud:
+        shader = &m_gouraudShader;
+        break;
+    case ShadingType::Phong:
+        shader = &m_phongShader;
+        break;
+    default:
+        break;
+    }
 
     shader->use();
     shader->setMat4("projMatrix", projection);

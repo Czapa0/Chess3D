@@ -112,5 +112,11 @@
     <None Include="shaders\depth.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\phong.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\phong.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

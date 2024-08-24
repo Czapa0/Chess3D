@@ -68,6 +68,6 @@ float ShadowCalculation(vec3 fragPos, int light, vec3 position)
     float currentDepth = length(fragToLight);
     // test for shadows
     float bias = 0.015; // we use a much larger bias since depth is now in [near_plane, far_plane] range
-    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;       
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
     return shadow;
 }

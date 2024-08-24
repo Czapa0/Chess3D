@@ -59,19 +59,19 @@ void main() {
     TexCoords = aTexCoord;
 	vec3 worldPos = vec3(modelMatrix * vec4(aPos, 1.0));
     FragPos = worldPos;
-    vec3 worldNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
+    vec3 worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * aNormal);
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 
     // fragment part
     vec3 V = normalize(cameraPos - worldPos);
 
-    Light l1 = CalcPointLight(pointLights[0], V, aNormal, aPos);
+    Light l1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
     PointLight1.ambient = vec4(l1.ambient, 1.0);
     PointLight1.diffuse = vec4(l1.diffuse, 1.0);
     PointLight1.specular = vec4(l1.specular, 1.0);
     PointLight1.position = pointLights[0].position;
 
-    Light l2 = CalcPointLight(pointLights[1], V, aNormal, aPos);
+    Light l2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
     PointLight2.ambient = vec4(l2.ambient, 1.0);
     PointLight2.diffuse = vec4(l2.diffuse, 1.0);
     PointLight2.specular = vec4(l2.specular, 1.0);
