@@ -237,6 +237,10 @@ void SceneManager::renderScene() {
     shader->setMat4("modelMatrix", model);
     shader->setVec3("cameraPos", m_camera.Position);
 
+    // fog
+    shader->setFloat("fogIntensity", 0.5);
+    shader->setVec3("fogColor", glm::vec3(1, 1, 1));
+
     // material
     shader->setVec3("material.ambient", m_chessBoard.material.ambient);
     shader->setVec3("material.diffuse", m_chessBoard.material.diffuse);

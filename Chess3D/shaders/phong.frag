@@ -25,6 +25,9 @@ uniform vec3 cameraPos;
 
 uniform float farPlane;
 
+uniform vec3 fogColor;
+uniform float fogIntensity;
+
 uniform samplerCubeArray depthMap;
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_ambient0;
@@ -37,6 +40,7 @@ out vec4 FragColor;
 
 vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P, float shadow);
 float CalcShadow(vec3 fragPos, int light, vec3 position);
+float CalcFogFactor(vec3 pos);
 
 void main() {
     vec3 finalColor = vec3(0.0, 0.0, 0.0);
@@ -48,6 +52,10 @@ void main() {
         float shadow = CalcShadow(Pos, i, pointLights[i].position);
         finalColor += CalcPointLight(pointLights[i], V, Normal, Pos, shadow);
     }
+
+    // fog
+    float fog = CalcFogFactor(Pos);
+    finalColor = mix(fogColor, finalColor, fog);
 
     FragColor = clamp(vec4(finalColor, 1.0), 0, 1);
 }
@@ -85,4 +93,14 @@ float CalcShadow(vec3 fragPos, int light, vec3 position)
     float bias = 0.03; // we use a much larger bias since depth is now in [near_plane, far_plane] range
     float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;       
     return shadow;
+}
+
+float CalcFogFactor(vec3 pos)
+{
+    if (fogIntensity == 0) return 1;
+    float gradient = (fogIntensity * fogIntensity - 50 * fogIntensity + 60) / 5;
+    float dist = length(cameraPos - pos);
+    float fog = exp(-pow((dist / gradient), 4));
+    fog = clamp(fog, 0.0, 1.0);
+    return fog;
 }
