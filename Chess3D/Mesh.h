@@ -23,6 +23,8 @@ struct Vertex {
     glm::vec3 Normal;
     // texCoords
     glm::vec2 TexCoords;
+    // face normal
+    glm::vec3 FaceNormal;
 };
 
 struct Texture {

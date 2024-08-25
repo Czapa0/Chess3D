@@ -91,9 +91,21 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
+        Vertex* v[3];
         // retrieve all indices of the face and store them in the indices vector
         for (unsigned int j = 0; j < face.mNumIndices; j++)
+        {
             indices.push_back(face.mIndices[j]);
+            v[j] = &(vertices[face.mIndices[j]]);
+        }
+        // face normal
+        glm::vec3 vec1 = v[1]->Position - v[0]->Position;
+        glm::vec3 vec2 = v[2]->Position - v[0]->Position;
+        glm::vec3 faceNormal = glm::normalize(glm::cross(vec1, vec2));
+        glm::vec3 avgNormal = (v[0]->Normal + v[1]->Normal + v[2]->Normal) / 3.0f;
+        float dot = glm::dot(faceNormal, avgNormal);
+        faceNormal = dot < 0.0f ? -faceNormal : faceNormal;
+        v[0]->FaceNormal = v[1]->FaceNormal = v[2]->FaceNormal = faceNormal;
     }
     // process materials
     aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
