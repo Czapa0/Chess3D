@@ -30,6 +30,7 @@ uniform vec3 cameraPos;
 uniform int pointLightCount;
 uniform float farPlane;
 
+uniform bool fogActive;
 uniform float fogIntensity;
 uniform vec3 fogColor;
 
@@ -58,7 +59,7 @@ void main()
         (1 - shadow) * PointLight2.specular;
 
     // fog
-    float fog = CalcFogFactor(FragPos);
+    float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;
     color = mix(vec4(fogColor, 1.0), color, fog);
 
     color = clamp(color, 0.0, 1.0);

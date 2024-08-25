@@ -108,6 +108,7 @@ void SceneManager::renderUI()
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(250, 750));
     ImGui::Begin("Control Panel", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
     ImGui::BeginGroup();
     ImGui::Text("Shading");
     if (ImGui::RadioButton("Flat", m_shadingType == ShadingType::Flat)) {
@@ -120,6 +121,15 @@ void SceneManager::renderUI()
         m_shadingType = ShadingType::Phong;
     }
     ImGui::EndGroup();
+    ImGui::Separator();
+
+    ImGui::BeginGroup();
+    ImGui::Text("Fog");
+    ImGui::Checkbox("Active", &m_fogActive);
+    ImGui::SliderFloat("Intensity", &m_fogIntensity, 0.0f, 1.0f);
+    ImGui::SliderInt("Color", &m_fogColor, 0, 255);
+    ImGui::EndGroup();
+
     ImGui::End();
 }
 
@@ -238,8 +248,10 @@ void SceneManager::renderScene() {
     shader->setVec3("cameraPos", m_camera.Position);
 
     // fog
-    shader->setFloat("fogIntensity", 0.5);
-    shader->setVec3("fogColor", glm::vec3(1, 1, 1));
+    shader->setFloat("fogIntensity", m_fogIntensity);
+    float col = 1.0 * m_fogColor / 255;
+    shader->setVec3("fogColor", glm::vec3(col, col, col));
+    shader->setBool("fogActive", m_fogActive);
 
     // material
     shader->setVec3("material.ambient", m_chessBoard.material.ambient);

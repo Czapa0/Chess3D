@@ -25,6 +25,7 @@ uniform vec3 cameraPos;
 
 uniform float farPlane;
 
+uniform bool fogActive;
 uniform vec3 fogColor;
 uniform float fogIntensity;
 
@@ -54,7 +55,7 @@ void main() {
     }
 
     // fog
-    float fog = CalcFogFactor(Pos);
+    float fog = fogActive ? CalcFogFactor(Pos) : 1.0;
     finalColor = mix(fogColor, finalColor, fog);
 
     FragColor = clamp(vec4(finalColor, 1.0), 0, 1);

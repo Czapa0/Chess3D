@@ -41,6 +41,11 @@ private:
 	unsigned int m_depthCubeMapArrayFBO;
 	unsigned int m_depthCubeMapArray;
 
+	// === FOG ===
+	bool m_fogActive = false;
+	float m_fogIntensity = 0.5;
+	int m_fogColor = 255;
+
 	// === WINDOW ===
 	GLFWwindow* m_window = nullptr;
 	GLFWmonitor* m_monitor = nullptr;
