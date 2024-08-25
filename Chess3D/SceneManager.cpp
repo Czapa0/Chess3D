@@ -125,6 +125,7 @@ void SceneManager::renderUI()
 
 int SceneManager::arrange() {
     // === SHADERS ===
+    m_flatShader = Shader("shaders/flat.vert", "shaders/flat.frag");
     m_gouraudShader = Shader("shaders/gouraud.vert", "shaders/gouraud.frag");
     m_phongShader = Shader("shaders/phong.vert", "shaders/phong.frag");
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
@@ -218,6 +219,7 @@ void SceneManager::renderScene() {
     switch (m_shadingType)
     {
     case ShadingType::Flat:
+        shader = &m_flatShader;
         break;
     case ShadingType::Gouraud:
         shader = &m_gouraudShader;

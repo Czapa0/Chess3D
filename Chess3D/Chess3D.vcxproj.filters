@@ -118,5 +118,11 @@
     <None Include="shaders\phong.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\flat.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\flat.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

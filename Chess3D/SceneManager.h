@@ -31,6 +31,7 @@ public:
 private:
 	// === SHADERS ===
 	ShadingType m_shadingType = ShadingType::Gouraud;
+	Shader m_flatShader;
 	Shader m_gouraudShader;
 	Shader m_phongShader;
 	Shader m_depthShader;
