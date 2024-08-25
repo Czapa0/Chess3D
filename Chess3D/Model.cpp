@@ -98,6 +98,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
             v[j] = &(vertices[face.mIndices[j]]);
         }
+        // trianlge position
+        glm::vec3 avgPosition = (v[0]->Position + v[1]->Position + v[2]->Position) / 3.0f;
+        v[0]->TriPosition = v[1]->TriPosition = v[2]->TriPosition = avgPosition;
         // face normal
         glm::vec3 vec1 = v[1]->Position - v[0]->Position;
         glm::vec3 vec2 = v[2]->Position - v[0]->Position;

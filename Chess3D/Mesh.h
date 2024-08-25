@@ -23,6 +23,8 @@ struct Vertex {
     glm::vec3 Normal;
     // texCoords
     glm::vec2 TexCoords;
+    // triangle position
+    glm::vec3 TriPosition;
     // face normal
     glm::vec3 FaceNormal;
 };
