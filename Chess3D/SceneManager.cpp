@@ -1,8 +1,8 @@
 #include "SceneManager.h"
 
-SceneManager::SceneManager() : m_camera(), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(5.0f, 3.0f, 3.0f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(0.0f, 0.0f, 5.0f), 1.0, 0.045, 0.0075);
+SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 2.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.0f, 4.0f, -1.0f), 1.0, 0.045, 0.0075);
 }
 
 int SceneManager::init() {
@@ -54,6 +54,7 @@ int SceneManager::loadModels() {
     // === CHESSBOARD ===
     m_chessBoard = Model("WoodenChessBoard_v1_L3.123cf3414759-151a-4f2d-be41-f4e663d384e3/12938_WoodenChessBoard_v1_l3.obj");
     m_chessBoard.modelMatrix = glm::scale(m_chessBoard.modelMatrix, glm::vec3(0.1));
+    m_chessBoard.modelMatrix = glm::rotate(m_chessBoard.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     return 0;
 }
 
