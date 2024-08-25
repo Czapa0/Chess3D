@@ -1,12 +1,13 @@
 #include "Model.h"
 
-Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
+Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma), modelMatrix(1.0)
 {
     loadModel(path);
 }
 
 void Model::Draw(Shader& shader)
 {
+    shader.setMat4("modelMatrix", modelMatrix);
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }

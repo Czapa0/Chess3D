@@ -53,6 +53,7 @@ int SceneManager::loadModels() {
     // TODO: maybe add some error checking in model class
     // === CHESSBOARD ===
     m_chessBoard = Model("WoodenChessBoard_v1_L3.123cf3414759-151a-4f2d-be41-f4e663d384e3/12938_WoodenChessBoard_v1_l3.obj");
+    m_chessBoard.modelMatrix = glm::scale(m_chessBoard.modelMatrix, glm::vec3(0.1));
     return 0;
 }
 
@@ -222,8 +223,6 @@ void SceneManager::renderScene() {
 
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
     glm::mat4 view = m_camera.GetViewMatrix();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.1));
 
     Shader* shader = &m_phongShader;
     switch (m_shadingType)
@@ -244,7 +243,6 @@ void SceneManager::renderScene() {
     shader->use();
     shader->setMat4("projMatrix", projection);
     shader->setMat4("viewMatrix", view);
-    shader->setMat4("modelMatrix", model);
     shader->setVec3("cameraPos", m_camera.Position);
 
     // fog
