@@ -78,6 +78,7 @@ private:
 	// === DATA ===
 	Model m_chessBoard;
 	Model m_whiteKing;
+	Model m_blackKing;
 
 	// === METHODS ===
 	int arrange();

@@ -61,6 +61,13 @@ int SceneManager::loadModels() {
     m_whiteKing.modelMatrix = glm::scale(m_whiteKing.modelMatrix, glm::vec3(0.1));
     m_whiteKing.modelMatrix = glm::rotate(m_whiteKing.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     m_whiteKing.modelMatrix = glm::translate(m_whiteKing.modelMatrix, glm::vec3(10.7f, -0.6f, 0.0f));
+
+    // === BLACK KING ===
+    m_blackKing = Model("models/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/12945_Stone_Chess_King_Side_B_v2_l1.obj");
+    m_blackKing.modelMatrix = glm::scale(m_blackKing.modelMatrix, glm::vec3(0.1));
+    m_blackKing.modelMatrix = glm::rotate(m_blackKing.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    m_blackKing.modelMatrix = glm::translate(m_blackKing.modelMatrix, glm::vec3(10.7f, 0.0f, 0.0f));
+    
     return 0;
 }
 
@@ -289,6 +296,7 @@ void SceneManager::renderModels(Shader& shader)
 {
     m_chessBoard.Draw(shader);
     m_whiteKing.Draw(shader);
+    m_blackKing.Draw(shader);
 }
 
 int SceneManager::terminate() {
