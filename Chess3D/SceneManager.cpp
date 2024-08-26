@@ -52,8 +52,15 @@ int SceneManager::init() {
 int SceneManager::loadModels() {
     // TODO: maybe add some error checking in model class
     // === CHESSBOARD ===
-    m_chessBoard = Chessboard("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj");
-    m_whiteKing = WhiteKing("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj");
+    m_chessBoard = Model("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj");
+    m_chessBoard.modelMatrix = glm::scale(m_chessBoard.modelMatrix, glm::vec3(0.1));
+    m_chessBoard.modelMatrix = glm::rotate(m_chessBoard.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // === WHITE KING ===
+    m_whiteKing = Model("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj");
+    m_whiteKing.modelMatrix = glm::scale(m_whiteKing.modelMatrix, glm::vec3(0.1));
+    m_whiteKing.modelMatrix = glm::rotate(m_whiteKing.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    m_whiteKing.modelMatrix = glm::translate(m_whiteKing.modelMatrix, glm::vec3(10.7f, -0.6f, 0.0f));
     return 0;
 }
 

@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClCompile Include="Callbacks.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Chessboard.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -137,12 +136,10 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="WhiteKing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Callbacks.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Chessboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -150,7 +147,6 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadingType.h" />
-    <ClInclude Include="WhiteKing.h" />
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
