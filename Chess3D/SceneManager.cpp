@@ -52,9 +52,7 @@ int SceneManager::init() {
 int SceneManager::loadModels() {
     // TODO: maybe add some error checking in model class
     // === CHESSBOARD ===
-    m_chessBoard = Model("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj");
-    m_chessBoard.modelMatrix = glm::scale(m_chessBoard.modelMatrix, glm::vec3(0.1));
-    m_chessBoard.modelMatrix = glm::rotate(m_chessBoard.modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    m_chessBoard = Chessboard("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj");
     return 0;
 }
 

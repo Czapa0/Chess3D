@@ -10,7 +10,7 @@
 
 #include <array>
 
-#include "Model.h"
+#include "Chessboard.h"
 #include "Camera.h"
 #include "WindowMode.h"
 #include "ShadingType.h"
@@ -76,7 +76,7 @@ private:
 	std::array<float, 3> m_backgroundColor = { 1.0f, 1.0f, 1.0f };
 
 	// === DATA ===
-	Model m_chessBoard;
+	Chessboard m_chessBoard;
 
 	// === METHODS ===
 	int arrange();
