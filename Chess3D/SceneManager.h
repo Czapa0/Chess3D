@@ -11,6 +11,7 @@
 #include <array>
 
 #include "Chessboard.h"
+#include "WhiteKing.h"
 #include "Camera.h"
 #include "WindowMode.h"
 #include "ShadingType.h"
@@ -30,7 +31,7 @@ public:
 	int run();
 private:
 	// === SHADERS ===
-	ShadingType m_shadingType = ShadingType::Flat;
+	ShadingType m_shadingType = ShadingType::Phong;
 	Shader m_flatShader;
 	Shader m_gouraudShader;
 	Shader m_phongShader;
@@ -77,6 +78,7 @@ private:
 
 	// === DATA ===
 	Chessboard m_chessBoard;
+	WhiteKing m_whiteKing;
 
 	// === METHODS ===
 	int arrange();
@@ -88,6 +90,7 @@ private:
 	void renderScene();
 	// void renderPointLightMenu();
 	// void youSpinMeRound();
+	void renderModels(Shader& shader);
 	int terminate();
 };
 

@@ -1,8 +1,8 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 2.0f, 1.0f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.0f, 4.0f, -1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
 }
 
 int SceneManager::init() {
@@ -53,6 +53,7 @@ int SceneManager::loadModels() {
     // TODO: maybe add some error checking in model class
     // === CHESSBOARD ===
     m_chessBoard = Chessboard("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj");
+    m_whiteKing = WhiteKing("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj");
     return 0;
 }
 
@@ -209,7 +210,7 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
         m_depthShader.setMat4("viewMatrix", light.shadowTransformataions[i]);
-        m_chessBoard.Draw(m_depthShader);
+        renderModels(m_depthShader);
     }
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
@@ -274,7 +275,13 @@ void SceneManager::renderScene() {
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
 
     // draw scene
-    m_chessBoard.Draw(*shader);
+    renderModels(*shader);
+}
+
+void SceneManager::renderModels(Shader& shader)
+{
+    m_chessBoard.Draw(shader);
+    m_whiteKing.Draw(shader);
 }
 
 int SceneManager::terminate() {

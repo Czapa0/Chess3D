@@ -69,6 +69,9 @@
     <ClCompile Include="Chessboard.cpp">
       <Filter>Source Files\Data</Filter>
     </ClCompile>
+    <ClCompile Include="WhiteKing.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
     <ClInclude Include="Chessboard.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="WhiteKing.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>

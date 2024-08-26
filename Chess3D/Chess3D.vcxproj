@@ -137,6 +137,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="WhiteKing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Callbacks.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadingType.h" />
+    <ClInclude Include="WhiteKing.h" />
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
