@@ -24,6 +24,7 @@ in vec3 FragPos;
 uniform samplerCubeArray depthMap;
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_ambient0;
+uniform sampler2D texture_specular0;
 
 uniform vec3 cameraPos;
 
@@ -50,13 +51,13 @@ void main()
     color = 
         (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * PointLight1.diffuse + 
         texture(texture_ambient0, TexCoords) * PointLight1.ambient + 
-        (1 - shadow) * PointLight1.specular;
+        (1 - shadow) * texture(texture_specular0, TexCoords) * PointLight1.specular;
     // 2
     shadow = ShadowCalculation(FragPos, 1, PointLight2.position);
     color += 
         (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * PointLight2.diffuse + 
         texture(texture_ambient0, TexCoords) * PointLight2.ambient + 
-        (1 - shadow) * PointLight2.specular;
+        (1 - shadow) * texture(texture_specular0, TexCoords) * PointLight2.specular;
 
     // fog
     float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;

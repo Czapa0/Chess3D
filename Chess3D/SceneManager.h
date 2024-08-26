@@ -30,7 +30,7 @@ public:
 	int run();
 private:
 	// === SHADERS ===
-	ShadingType m_shadingType = ShadingType::Gouraud;
+	ShadingType m_shadingType = ShadingType::Flat;
 	Shader m_flatShader;
 	Shader m_gouraudShader;
 	Shader m_phongShader;

@@ -32,6 +32,7 @@ uniform float fogIntensity;
 uniform samplerCubeArray depthMap;
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_ambient0;
+uniform sampler2D texture_specular0;
 
 in vec3 Pos;
 in vec3 Normal;
@@ -75,7 +76,7 @@ vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P, float shadow) {
 
     vec3 ambient = light.ambient * material.ambient * vec3(texture(texture_ambient0, TexCoords)) * attenuation;
     vec3 diffuse = cosNL * light.diffuse * material.diffuse * vec3(texture(texture_diffuse0, TexCoords)) * attenuation;
-    vec3 specular = cosVRn * light.specular * material.specular * attenuation;
+    vec3 specular = cosVRn * light.specular * material.specular * vec3(texture(texture_specular0, TexCoords)) * attenuation;
 //    return specular;
     return (1.0 - shadow) * (specular + diffuse) + ambient;
 }

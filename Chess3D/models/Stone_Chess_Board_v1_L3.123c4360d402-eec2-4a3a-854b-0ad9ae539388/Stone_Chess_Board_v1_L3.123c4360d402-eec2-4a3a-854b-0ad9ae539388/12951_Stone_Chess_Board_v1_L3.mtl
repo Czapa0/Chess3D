@@ -14,3 +14,4 @@ newmtl 12951_Stone_Chess_Board
 	Ke 0.0000 0.0000 0.0000
 	map_Ka 12951_Stone_Chess_Board_diff.jpg
 	map_Kd 12951_Stone_Chess_Board_diff.jpg
+	map_Ks 12951_Stone_Chess_Board_spec.jpg
