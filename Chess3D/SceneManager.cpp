@@ -214,6 +214,11 @@ int SceneManager::arrange() {
 }
 
 int SceneManager::run() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    for (const PointLight& light : m_pointLights) {
+        renderPointLightDepthMap(light);
+    }
+
     while (!glfwWindowShouldClose(m_window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         m_deltaTime = currentFrame - m_lastFrame;
@@ -235,9 +240,6 @@ int SceneManager::run() {
         glClearColor(m_backgroundColor.at(0), m_backgroundColor.at(1), m_backgroundColor.at(2), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (const PointLight& light : m_pointLights) {
-            renderPointLightDepthMap(light);
-        }
         renderScene();
         renderUI();
 
