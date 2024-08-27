@@ -62,17 +62,29 @@ int SceneManager::loadModels() {
     m_whiteKing = Model("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj", model);
     m_whiteKing.modelMatrix = glm::translate(m_whiteKing.modelMatrix, glm::vec3(10.7f, -0.6f, 0.0f));
 
+    // === WHITE PAWNS ===
+    Model wp("models/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/12944_Stone_Chess_Pawn_Side_A_V2_L3.obj", model);
+    for (Model& m : m_whitePawns) {
+        m = wp;
+    }
+    m_whitePawns[0].modelMatrix = glm::translate(m_whitePawns[0].modelMatrix, glm::vec3(0.0f, -0.2f, 0.0f));
+    m_whitePawns[1].modelMatrix = glm::translate(m_whitePawns[1].modelMatrix, glm::vec3(10.8f, -0.2f, 0.0f));
+    m_whitePawns[2].modelMatrix = glm::translate(m_whitePawns[2].modelMatrix, glm::vec3(27.0f, -0.2f, 0.0f));
+    m_whitePawns[3].modelMatrix = glm::translate(m_whitePawns[3].modelMatrix, glm::vec3(32.4f, -0.2f, 0.0f));
+    m_whitePawns[4].modelMatrix = glm::translate(m_whitePawns[4].modelMatrix, glm::vec3(37.8f, -0.2f, 0.0f));
+
     // === BLACK KING ===
     m_blackKing = Model("models/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/12945_Stone_Chess_King_Side_B_v2_l1.obj", model);
     m_blackKing.modelMatrix = glm::translate(m_blackKing.modelMatrix, glm::vec3(10.7f, 0.0f, 0.0f));
 
     // == BLACK ROOKS ===
+    Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", model);
     for (Model& m : m_blackRooks) {
-        m = Model("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", model);
+        m = br;
     }
     m_blackRooks[0].modelMatrix = glm::translate(m_blackRooks[0].modelMatrix, glm::vec3(-11.2f, -0.6f, 0.0f));
     m_blackRooks[1].modelMatrix = glm::translate(m_blackRooks[1].modelMatrix, glm::vec3(-0.3f, -27.5f, 0.0f));
-    
+
     return 0;
 }
 
@@ -300,7 +312,12 @@ void SceneManager::renderScene() {
 void SceneManager::renderModels(Shader& shader)
 {
     m_chessBoard.Draw(shader);
+
     m_whiteKing.Draw(shader);
+    for (Model& pawn : m_whitePawns) {
+        pawn.Draw(shader);
+    }
+
     m_blackKing.Draw(shader);
     for (Model& rook : m_blackRooks) {
         rook.Draw(shader);

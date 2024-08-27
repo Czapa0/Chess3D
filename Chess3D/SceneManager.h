@@ -77,7 +77,10 @@ private:
 
 	// === DATA ===
 	Model m_chessBoard;
+
 	Model m_whiteKing;
+	std::array<Model, 5> m_whitePawns;
+	
 	Model m_blackKing;
 	std::array<Model, 2> m_blackRooks;
 
