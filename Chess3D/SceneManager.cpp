@@ -89,6 +89,11 @@ int SceneManager::loadModels() {
     m_blackRooks[0].modelMatrix = glm::translate(m_blackRooks[0].modelMatrix, glm::vec3(-11.2f, -0.6f, 0.0f));
     m_blackRooks[1].modelMatrix = glm::translate(m_blackRooks[1].modelMatrix, glm::vec3(-0.3f, -27.5f, 0.0f));
 
+    // === BLACK KNIGHT ===
+    m_blackKnight = Model("models/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/12949_Stone_Chess_Knight_Side_B_V2_l1.obj", model);
+    m_blackKnight.modelMatrix = glm::scale(m_blackKnight.modelMatrix, glm::vec3(0.8));
+    m_blackKnight.modelMatrix = glm::translate(m_blackKnight.modelMatrix, glm::vec3(-17.0f, -22.5f, 0.0f));
+
     // === BLACK PAWNS ===
     Model bp("models/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/12950_Stone_Chess_Pawn_Side_B_v2_l3.obj", model);
     for (Model& m : m_blackPawns) {
@@ -338,6 +343,7 @@ void SceneManager::renderModels(Shader& shader)
     for (Model& rook : m_blackRooks) {
         rook.Draw(shader);
     }
+    m_blackKnight.Draw(shader);
     for (Model& pawn : m_blackPawns) {
         pawn.Draw(shader);
     }

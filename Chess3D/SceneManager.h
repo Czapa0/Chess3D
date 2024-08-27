@@ -83,8 +83,9 @@ private:
 	
 	Model m_blackKing;
 	Model m_blackQueen;
-	std::array<Model, 5> m_blackPawns;
 	std::array<Model, 2> m_blackRooks;
+	Model m_blackKnight;
+	std::array<Model, 5> m_blackPawns;
 
 	// === METHODS ===
 	int arrange();
