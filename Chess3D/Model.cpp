@@ -1,15 +1,17 @@
 #include "Model.h"
 
-Model::Model(std::string const& path, glm::mat4 model, bool gamma) : gammaCorrection(gamma), modelMatrix(model)
+Model::Model(std::string const& path, glm::mat4 model, bool animated, bool gamma) : animated(animated), gammaCorrection(gamma), modelMatrix(model)
 {
     loadModel(path);
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(Shader& shader, bool onlyAnimated)
 {
-    shader.setMat4("modelMatrix", modelMatrix);
-    for (unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shader);
+    if (!onlyAnimated || animated) {
+        shader.setMat4("modelMatrix", modelMatrix);
+        for (unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].Draw(shader);
+    }
 }
 
 void Model::loadModel(std::string const& path)

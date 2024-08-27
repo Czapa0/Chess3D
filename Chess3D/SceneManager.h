@@ -95,11 +95,10 @@ private:
 	void initShadowMapping();
 	void moveCamera();
 	void renderUI();
-	void renderPointLightDepthMap(const PointLight& light);
+	void renderPointLightDepthMap(const PointLight& light, bool firstRender = false);
 	void renderScene();
-	// void renderPointLightMenu();
-	// void youSpinMeRound();
-	void renderModels(Shader& shader);
+	void renderModels(Shader& shader, bool onlyAnimated = false);
+	void animateBlackQueen();
 	int terminate();
 };
 

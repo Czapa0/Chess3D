@@ -90,7 +90,7 @@ int SceneManager::loadModels() {
     m_blackKing.modelMatrix = glm::translate(m_blackKing.modelMatrix, glm::vec3(10.7f, 0.0f, 0.0f));
 
     // === BLACK QUEEN ===
-    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", model);
+    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", model, true);
     m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-5.4f, -27.4f, 0.0f));
 
     // == BLACK ROOKS ===
@@ -216,7 +216,7 @@ int SceneManager::arrange() {
 int SceneManager::run() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (const PointLight& light : m_pointLights) {
-        renderPointLightDepthMap(light);
+        renderPointLightDepthMap(light, true);
     }
 
     while (!glfwWindowShouldClose(m_window)) {
@@ -232,6 +232,7 @@ int SceneManager::run() {
         ss << " FPS] " << m_title;
         glfwSetWindowTitle(m_window, ss.str().c_str());
         moveCamera();
+        animateBlackQueen();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -239,6 +240,10 @@ int SceneManager::run() {
 
         glClearColor(m_backgroundColor.at(0), m_backgroundColor.at(1), m_backgroundColor.at(2), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        for (const PointLight& light : m_pointLights) {
+            renderPointLightDepthMap(light);
+        }
 
         renderScene();
         renderUI();
@@ -251,7 +256,7 @@ int SceneManager::run() {
     return terminate();
 }
 
-void SceneManager::renderPointLightDepthMap(const PointLight& light)
+void SceneManager::renderPointLightDepthMap(const PointLight& light, bool firstRender)
 {
     // TODO: use render scene
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
@@ -275,7 +280,7 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light)
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
         m_depthShader.setMat4("viewMatrix", light.shadowTransformataions[i]);
-        renderModels(m_depthShader);
+        renderModels(m_depthShader, !firstRender);
     }
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
@@ -343,28 +348,34 @@ void SceneManager::renderScene() {
     renderModels(*shader);
 }
 
-void SceneManager::renderModels(Shader& shader)
+void SceneManager::renderModels(Shader& shader, bool onlyAnimated)
 {
-    m_chessBoard.Draw(shader);
+    m_chessBoard.Draw(shader, onlyAnimated);
 
-    m_whiteKing.Draw(shader);
-    m_whiteQueen.Draw(shader);
+    m_whiteKing.Draw(shader, onlyAnimated);
+    m_whiteQueen.Draw(shader, onlyAnimated);
     for (Model& rook : m_whiteRooks) {
-        rook.Draw(shader);
+        rook.Draw(shader, onlyAnimated);
     }
     for (Model& pawn : m_whitePawns) {
-        pawn.Draw(shader);
+        pawn.Draw(shader, onlyAnimated);
     }
 
-    m_blackKing.Draw(shader);
-    m_blackQueen.Draw(shader);
+    m_blackKing.Draw(shader, onlyAnimated);
+    m_blackQueen.Draw(shader, onlyAnimated);
     for (Model& rook : m_blackRooks) {
-        rook.Draw(shader);
+        rook.Draw(shader, onlyAnimated);
     }
-    m_blackKnight.Draw(shader);
+    m_blackKnight.Draw(shader, onlyAnimated);
     for (Model& pawn : m_blackPawns) {
-        pawn.Draw(shader);
+        pawn.Draw(shader, onlyAnimated);
     }
+}
+
+void SceneManager::animateBlackQueen()
+{
+    float speed = 0.5f;
+    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(0.5f * m_deltaTime, 0.0f, 0.0f));
 }
 
 int SceneManager::terminate() {
