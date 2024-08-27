@@ -467,3 +467,4 @@ FodyWeavers.xsd
 
 # Added manually
 *.ini
+!Chess3D/models/**/*.obj
