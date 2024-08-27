@@ -1,13 +1,13 @@
 #include "Model.h"
 
-Model::Model(std::string const& path, glm::mat4 model, bool animated, bool gamma) : animated(animated), gammaCorrection(gamma), modelMatrix(model)
+Model::Model(std::string const& path, RenderType type, glm::mat4 model, bool gamma) : type(type), gammaCorrection(gamma), modelMatrix(model)
 {
     loadModel(path);
 }
 
-void Model::Draw(Shader& shader, bool onlyAnimated)
+void Model::Draw(Shader& shader, RenderType renderType)
 {
-    if (!onlyAnimated || animated) {
+    if (renderType == type || renderType == RenderType::Everything) {
         shader.setMat4("modelMatrix", modelMatrix);
         for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);

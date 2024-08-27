@@ -55,19 +55,19 @@ int SceneManager::loadModels() {
     model = glm::scale(model, glm::vec3(0.1));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     // === CHESSBOARD ===
-    m_chessBoard = Model("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj", model);
+    m_chessBoard = Model("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj", RenderType::Static, model);
     m_chessBoard.modelMatrix = glm::translate(m_chessBoard.modelMatrix, glm::vec3(0.0f, 0.0f, 0.5f));
 
     // === WHITE KING ===
-    m_whiteKing = Model("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj", model);
+    m_whiteKing = Model("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj", RenderType::Static, model);
     m_whiteKing.modelMatrix = glm::translate(m_whiteKing.modelMatrix, glm::vec3(10.7f, -0.6f, 0.0f));
 
     // === WHITE QUEEN ===
-    m_whiteQueen = Model("models/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/12940_Stone_Chess_Queen_Side_A_V2_l1.obj", model);
+    m_whiteQueen = Model("models/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/12940_Stone_Chess_Queen_Side_A_V2_l1.obj", RenderType::Static, model);
     m_whiteQueen.modelMatrix = glm::translate(m_whiteQueen.modelMatrix, glm::vec3(16.1f, 21.2f, 0.0f));
 
     // === WHITE ROOKS ===
-    Model wr("models/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/12941_Stone_Chess_Rook_Side_A_V2_l1.obj", model);
+    Model wr("models/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/12941_Stone_Chess_Rook_Side_A_V2_l1.obj", RenderType::Static, model);
     for (Model& m : m_whiteRooks) {
         m = wr;
     }
@@ -75,7 +75,7 @@ int SceneManager::loadModels() {
     m_whiteRooks[1].modelMatrix = glm::translate(m_whiteRooks[1].modelMatrix, glm::vec3(11.1f, 21.6f, 0.0f));
 
     // === WHITE PAWNS ===
-    Model wp("models/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/12944_Stone_Chess_Pawn_Side_A_V2_L3.obj", model);
+    Model wp("models/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/12944_Stone_Chess_Pawn_Side_A_V2_L3.obj", RenderType::Static, model);
     for (Model& m : m_whitePawns) {
         m = wp;
     }
@@ -86,15 +86,15 @@ int SceneManager::loadModels() {
     m_whitePawns[4].modelMatrix = glm::translate(m_whitePawns[4].modelMatrix, glm::vec3(37.8f, -0.2f, 0.0f));
 
     // === BLACK KING ===
-    m_blackKing = Model("models/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/12945_Stone_Chess_King_Side_B_v2_l1.obj", model);
+    m_blackKing = Model("models/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/12945_Stone_Chess_King_Side_B_v2_l1.obj", RenderType::Static, model);
     m_blackKing.modelMatrix = glm::translate(m_blackKing.modelMatrix, glm::vec3(10.7f, 0.0f, 0.0f));
 
     // === BLACK QUEEN ===
-    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", model, true);
+    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", RenderType::Dynamic, model);
     m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-5.4f, -27.4f, 0.0f));
 
     // == BLACK ROOKS ===
-    Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", model);
+    Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", RenderType::Static, model);
     for (Model& m : m_blackRooks) {
         m = br;
     }
@@ -102,12 +102,12 @@ int SceneManager::loadModels() {
     m_blackRooks[1].modelMatrix = glm::translate(m_blackRooks[1].modelMatrix, glm::vec3(-0.3f, -27.5f, 0.0f));
 
     // === BLACK KNIGHT ===
-    m_blackKnight = Model("models/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/12949_Stone_Chess_Knight_Side_B_V2_l1.obj", model);
+    m_blackKnight = Model("models/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/12949_Stone_Chess_Knight_Side_B_V2_l1.obj", RenderType::Static, model);
     m_blackKnight.modelMatrix = glm::scale(m_blackKnight.modelMatrix, glm::vec3(0.8));
     m_blackKnight.modelMatrix = glm::translate(m_blackKnight.modelMatrix, glm::vec3(-17.0f, -22.5f, 0.0f));
 
     // === BLACK PAWNS ===
-    Model bp("models/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/12950_Stone_Chess_Pawn_Side_B_v2_l3.obj", model);
+    Model bp("models/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/12950_Stone_Chess_Pawn_Side_B_v2_l3.obj", RenderType::Static, model);
     for (Model& m : m_blackPawns) {
         m = bp;
     }
@@ -125,6 +125,24 @@ void SceneManager::initShadowMapping()
     // init depth map array FBO
     glGenFramebuffers(1, &m_depthCubeMapArrayFBO);
 
+    // === STATIC CUBE ARRAY ===
+
+    // init cube depth map array
+    glGenTextures(1, &m_depthCubeMapArrayStatic);
+
+    // assign 2D texture to each face of the cube
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArrayStatic);
+    glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_DEPTH_COMPONENT24, SHADOW_WIDTH, SHADOW_HEIGHT, m_pointLights.size() * 6);
+
+    // texture parameters
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // === FIANL CUBE ARRAY ===
+
     // init cube depth map array
     glGenTextures(1, &m_depthCubeMapArray);
 
@@ -139,9 +157,11 @@ void SceneManager::initShadowMapping()
     glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
+    // === BIND FBO ===
+
     // bind depth cube to FBO as depth attatchment
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArrayStatic, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
@@ -214,11 +234,13 @@ int SceneManager::arrange() {
 }
 
 int SceneManager::run() {
+    // === STATIC POINT LIGHT SHADOWS ===
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (const PointLight& light : m_pointLights) {
-        renderPointLightDepthMap(light, true);
+        renderPointLightDepthMap(light, RenderType::Static);
     }
 
+    // === RENDER LOOP ===
     while (!glfwWindowShouldClose(m_window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         m_deltaTime = currentFrame - m_lastFrame;
@@ -241,8 +263,13 @@ int SceneManager::run() {
         glClearColor(m_backgroundColor.at(0), m_backgroundColor.at(1), m_backgroundColor.at(2), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glCopyImageSubData(
+            m_depthCubeMapArrayStatic, GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0,
+            m_depthCubeMapArray, GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0,
+            SHADOW_WIDTH, SHADOW_HEIGHT, 6 * m_pointLights.size());
+
         for (const PointLight& light : m_pointLights) {
-            renderPointLightDepthMap(light);
+            renderPointLightDepthMap(light, RenderType::Dynamic);
         }
 
         renderScene();
@@ -256,12 +283,10 @@ int SceneManager::run() {
     return terminate();
 }
 
-void SceneManager::renderPointLightDepthMap(const PointLight& light, bool firstRender)
+void SceneManager::renderPointLightDepthMap(const PointLight& light, RenderType renderMode)
 {
-    // TODO: use render scene
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, light.depthMapFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
 
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -275,12 +300,19 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light, bool firstR
     for (int i = 0; i < 6; i++)
     {
         GLenum face = light.id * 6 + i;
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
+        // static render
+        if (renderMode == RenderType::Static) {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArrayStatic, 0, face);
+        }
+        // normal render
+        else {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArray, 0, face);
+        }
         auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
         m_depthShader.setMat4("viewMatrix", light.shadowTransformataions[i]);
-        renderModels(m_depthShader, !firstRender);
+        renderModels(m_depthShader, renderMode);
     }
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
@@ -348,27 +380,27 @@ void SceneManager::renderScene() {
     renderModels(*shader);
 }
 
-void SceneManager::renderModels(Shader& shader, bool onlyAnimated)
+void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 {
-    m_chessBoard.Draw(shader, onlyAnimated);
+    m_chessBoard.Draw(shader, renderMode);
 
-    m_whiteKing.Draw(shader, onlyAnimated);
-    m_whiteQueen.Draw(shader, onlyAnimated);
+    m_whiteKing.Draw(shader, renderMode);
+    m_whiteQueen.Draw(shader, renderMode);
     for (Model& rook : m_whiteRooks) {
-        rook.Draw(shader, onlyAnimated);
+        rook.Draw(shader, renderMode);
     }
     for (Model& pawn : m_whitePawns) {
-        pawn.Draw(shader, onlyAnimated);
+        pawn.Draw(shader, renderMode);
     }
 
-    m_blackKing.Draw(shader, onlyAnimated);
-    m_blackQueen.Draw(shader, onlyAnimated);
+    m_blackKing.Draw(shader, renderMode);
+    m_blackQueen.Draw(shader, renderMode);
     for (Model& rook : m_blackRooks) {
-        rook.Draw(shader, onlyAnimated);
+        rook.Draw(shader, renderMode);
     }
-    m_blackKnight.Draw(shader, onlyAnimated);
+    m_blackKnight.Draw(shader, renderMode);
     for (Model& pawn : m_blackPawns) {
-        pawn.Draw(shader, onlyAnimated);
+        pawn.Draw(shader, renderMode);
     }
 }
 

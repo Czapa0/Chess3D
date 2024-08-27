@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "WindowMode.h"
 #include "ShadingType.h"
+#include "RenderType.h"
 #include "Light.h"
 #include "Callbacks.h"
 
@@ -39,6 +40,7 @@ private:
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
 	unsigned int m_depthCubeMapArrayFBO;
+	unsigned int m_depthCubeMapArrayStatic;
 	unsigned int m_depthCubeMapArray;
 
 	// === FOG ===
@@ -95,9 +97,9 @@ private:
 	void initShadowMapping();
 	void moveCamera();
 	void renderUI();
-	void renderPointLightDepthMap(const PointLight& light, bool firstRender = false);
+	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
 	void renderScene();
-	void renderModels(Shader& shader, bool onlyAnimated = false);
+	void renderModels(Shader& shader, RenderType renderMode = RenderType::Everything);
 	void animateBlackQueen();
 	int terminate();
 };
