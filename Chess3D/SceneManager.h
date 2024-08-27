@@ -82,6 +82,7 @@ private:
 	std::array<Model, 5> m_whitePawns;
 	
 	Model m_blackKing;
+	Model m_blackQueen;
 	std::array<Model, 5> m_blackPawns;
 	std::array<Model, 2> m_blackRooks;
 
