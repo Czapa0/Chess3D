@@ -406,8 +406,11 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 
 void SceneManager::animateBlackQueen()
 {
-    float speed = 0.5f;
-    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(0.5f * m_deltaTime, 0.0f, 0.0f));
+    // TODO: better handling of constatnts
+    if (m_blackQueen.modelMatrix[3][0] > 1.6f || m_blackQueen.modelMatrix[3][0] < -0.54f) {
+        m_speedFactor = -m_speedFactor;
+    }
+    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(ANIMATION_SPEED * m_speedFactor * m_deltaTime, 0.0f, 0.0f));
 }
 
 int SceneManager::terminate() {

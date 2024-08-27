@@ -1,6 +1,8 @@
 #ifndef SCENE_MANAGER_H
 #define SCENE_MANAGER_H
 
+constexpr float ANIMATION_SPEED = 4.0;
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -57,6 +59,9 @@ private:
 
 	int m_width;
 	int m_height;
+
+	// === ANIMATION ===
+	float m_speedFactor = 1.0;
 
 	// === CAMERA ===
 	Camera m_camera;
