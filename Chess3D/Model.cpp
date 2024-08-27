@@ -1,6 +1,6 @@
 #include "Model.h"
 
-Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma), modelMatrix(1.0)
+Model::Model(std::string const& path, glm::mat4 model, bool gamma) : gammaCorrection(gamma), modelMatrix(model)
 {
     loadModel(path);
 }

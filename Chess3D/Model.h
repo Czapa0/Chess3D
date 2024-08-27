@@ -38,7 +38,7 @@ public:
     Model() = default;
 
     // constructor, expects a filepath to a 3D model.
-    Model(std::string const& path, bool gamma = false);
+    Model(std::string const& path, glm::mat4 model = glm::mat4(1.0), bool gamma = false);
 
     // draws the model, and thus all its meshes
     void Draw(Shader& shader);

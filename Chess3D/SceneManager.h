@@ -79,6 +79,7 @@ private:
 	Model m_chessBoard;
 	Model m_whiteKing;
 	Model m_blackKing;
+	std::array<Model, 2> m_blackRooks;
 
 	// === METHODS ===
 	int arrange();
