@@ -79,6 +79,7 @@ private:
 	Model m_chessBoard;
 
 	Model m_whiteKing;
+	Model m_whiteQueen;
 	std::array<Model, 5> m_whitePawns;
 	
 	Model m_blackKing;
