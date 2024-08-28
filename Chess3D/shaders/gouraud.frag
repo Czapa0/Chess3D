@@ -37,6 +37,15 @@ uniform vec3 fogColor;
 
 out vec4 FragColor;
 
+vec3 sampleOffsetDirections[20] = vec3[]
+(
+   vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+   vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+   vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+   vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+   vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+); 
+
 float ShadowCalculation(vec3 fragPos, int light, vec3 position);
 float CalcFogFactor(vec3 pos);
 
@@ -69,17 +78,22 @@ void main()
 
 float ShadowCalculation(vec3 fragPos, int light, vec3 position)
 {
-    // get vector between fragment position and light position
     vec3 fragToLight = fragPos - position;
-    // use the fragment to light vector to sample from the depth map    
-    float closestDepth = texture(depthMap, vec4(fragToLight, light)).r;
-    // it is currently in linear range between [0,1], let's re-transform it back to original depth value
-    closestDepth *= farPlane;
-    // now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
-    // test for shadows
-    float bias = 0.03; // we use a much larger bias since depth is now in [near_plane, far_plane] range
-    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+
+    float shadow = 0.0;
+    float bias   = 0.03;
+    int samples  = 20;
+    float viewDistance = length(cameraPos - FragPos);
+    float diskRadius = (1.0 + (viewDistance / farPlane)) / 100.0;
+    for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(depthMap, vec4(fragToLight + sampleOffsetDirections[i] * diskRadius, light)).r;
+        closestDepth *= farPlane;
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
     return shadow;
 }
 
