@@ -2,6 +2,7 @@
 #define SCENE_MANAGER_H
 
 constexpr float ANIMATION_SPEED = 4.0;
+constexpr float ANIMATION_ANGLE = 30.0;
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -62,6 +63,8 @@ private:
 
 	// === ANIMATION ===
 	float m_speedFactor = 1.0;
+	float m_translation = 0.0;
+	float m_rotation = 0.0;
 
 	// === CAMERA ===
 	Camera m_camera;

@@ -91,7 +91,7 @@ int SceneManager::loadModels() {
 
     // === BLACK QUEEN ===
     m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", RenderType::Dynamic, model);
-    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-5.4f, -27.4f, 0.0f));
+    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-8.0f, -7.5f, 5.1f));
 
     // == BLACK ROOKS ===
     Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", RenderType::Static, model);
@@ -407,10 +407,29 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 void SceneManager::animateBlackQueen()
 {
     // TODO: better handling of constatnts
-    if (m_blackQueen.modelMatrix[3][0] > 1.6f || m_blackQueen.modelMatrix[3][0] < -0.54f) {
+    // translation borders
+    if (m_blackQueen.modelMatrix[3][0] > 1.4f || m_blackQueen.modelMatrix[3][0] < -0.8f) {
         m_speedFactor = -m_speedFactor;
     }
-    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(ANIMATION_SPEED * m_speedFactor * m_deltaTime, 0.0f, 0.0f));
+
+    // recalculate mode matrix
+    // TODO: probably shouls be stored in model
+    glm::mat4 model(1.0);
+    model = glm::scale(model, glm::vec3(0.1));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-8.0f, -7.5f, 5.1f));
+
+    // update animation variables
+    m_translation += ANIMATION_SPEED * m_speedFactor * m_deltaTime;
+    m_rotation += ANIMATION_ANGLE * m_deltaTime;
+    while (m_rotation > 360.0f) {
+        m_rotation -= 360.0f;
+    }
+
+    // rotation and translation
+    model = glm::translate(model, glm::vec3(m_translation, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_blackQueen.modelMatrix = model;
 }
 
 int SceneManager::terminate() {
