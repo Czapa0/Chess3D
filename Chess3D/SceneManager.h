@@ -20,6 +20,7 @@ constexpr float ANIMATION_ANGLE = 30.0;
 #include "RenderType.h"
 #include "Light.h"
 #include "Callbacks.h"
+#include "Skybox.h"
 
 class SceneManager
 {
@@ -98,6 +99,8 @@ private:
 	std::array<Model, 2> m_blackRooks;
 	Model m_blackKnight;
 	std::array<Model, 5> m_blackPawns;
+
+	Skybox m_skybox;
 
 	// === METHODS ===
 	int arrange();

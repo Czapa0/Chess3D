@@ -230,6 +230,19 @@ int SceneManager::arrange() {
         return 1;
     }
 
+    std::vector<std::string> faces{
+        "skybox1/1.png",
+        "skybox1/2.png",
+        "skybox1/3.png",
+        "skybox1/4.png",
+        "skybox1/5.png",
+        "skybox1/6.png"
+    };
+    if (m_skybox.loadCubemap(faces)) {
+        std::cerr << "Error loading skybox" << std::endl;
+        return 1;
+    }
+
     return 0;
 }
 
