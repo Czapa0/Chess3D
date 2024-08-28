@@ -38,13 +38,13 @@ layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec3 aTriPos;
 layout(location = 4) in vec3 aFaceNormal;
 
-flat out struct {
+out struct {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular;
     vec3 position;
 } PointLight1;
-flat out struct {
+out struct {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular;
@@ -59,7 +59,7 @@ void main() {
     // vertex part
     TexCoords = aTexCoord;
 	vec3 worldPos = vec3(modelMatrix * vec4(aTriPos, 1.0));
-    FragPos = worldPos;
+    FragPos = vec3(modelMatrix * vec4(aPos, 1.0));;
     vec3 worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * aFaceNormal);
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 

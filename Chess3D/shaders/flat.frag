@@ -6,13 +6,13 @@ struct Light{
     vec3 specular;
 };
 
-flat in struct {
+in struct {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular;
     vec3 position;
 } PointLight1;
-flat in struct {
+in struct {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular;
