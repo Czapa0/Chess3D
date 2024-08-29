@@ -9,6 +9,7 @@ struct Light{
 
 in Light PointLight1;
 in Light PointLight2;
+in Light SpotLight1;
 in vec2 TexCoords;
 in vec3 FragPos;
 
@@ -58,6 +59,14 @@ void main()
         (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * PointLight2.diffuse + 
         texture(texture_ambient0, TexCoords) * PointLight2.ambient + 
         (1 - shadow) * texture(texture_specular0, TexCoords) * PointLight2.specular;
+
+    // spot lights
+    // 1.
+    shadow = 0.0;
+    color += 
+        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * SpotLight1.diffuse + 
+        texture(texture_ambient0, TexCoords) * SpotLight1.ambient + 
+        (1 - shadow) * texture(texture_specular0, TexCoords) *  SpotLight1.specular;
 
     // fog
     float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;
