@@ -1,23 +1,14 @@
 #version 450 core
 
 struct Light{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    vec3 position;
 };
 
-in struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight1;
-in struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight2;
+in Light PointLight1;
+in Light PointLight2;
 in vec2 TexCoords;
 in vec3 FragPos;
 

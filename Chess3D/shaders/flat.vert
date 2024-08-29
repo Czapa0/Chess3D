@@ -1,9 +1,10 @@
 #version 450 core
 
 struct Light{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    vec3 position;
 };
 
 struct Material {
@@ -27,6 +28,21 @@ struct PointLight {
 uniform int pointLightCount;
 uniform PointLight pointLights[MAX_POINT_LIGHT];
 
+#define MAX_SPOT_LIGHT 5
+struct SpotLight {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 position;
+    vec3 direction;
+    float k0;
+    float k1;
+    float k2;
+    float cone;
+};
+uniform int spotLightCount;
+uniform SpotLight spotLights[MAX_SPOT_LIGHT];
+
 uniform vec3 cameraPos;
 
 uniform mat4 modelMatrix;
@@ -38,22 +54,13 @@ layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec3 aTriPos;
 layout(location = 4) in vec3 aFaceNormal;
 
-out struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight1;
-out struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight2;
+out Light PointLight1;
+out Light PointLight2;
 out vec2 TexCoords;
 out vec3 FragPos;
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
+Light CalcSpotLight(SpotLight light, vec3 V, vec3 color, vec3 N, vec3 P);
 
 void main() {
     // vertex part
@@ -66,17 +73,13 @@ void main() {
     // fragment part
     vec3 V = normalize(cameraPos - worldPos);
 
-    Light l1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
-    PointLight1.ambient = vec4(l1.ambient, 1.0);
-    PointLight1.diffuse = vec4(l1.diffuse, 1.0);
-    PointLight1.specular = vec4(l1.specular, 1.0);
-    PointLight1.position = pointLights[0].position;
+    Light pl1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
+    pl1.position = pointLights[0].position;
+    PointLight1 = pl1;
 
-    Light l2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
-    PointLight2.ambient = vec4(l2.ambient, 1.0);
-    PointLight2.diffuse = vec4(l2.diffuse, 1.0);
-    PointLight2.specular = vec4(l2.specular, 1.0);
-    PointLight2.position = pointLights[1].position;
+    Light pl2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
+    pl2.position = pointLights[1].position;
+    PointLight2 = pl2;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
@@ -92,8 +95,28 @@ Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
         light.k2 * distance * distance);
 
     Light res;
-    res.ambient = light.ambient * material.ambient * attenuation;
-    res.diffuse = cosNL * light.diffuse * material.diffuse * attenuation;
-    res.specular = cosVRn * light.specular * material.specular * attenuation;
+    res.ambient = vec4(light.ambient * material.ambient * attenuation, 1.0);
+    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse * attenuation, 1.0);
+    res.specular = vec4(cosVRn * light.specular * material.specular * attenuation, 1.0);
+    return res;
+}
+
+Light CalcSpotLight(SpotLight light, vec3 V, vec3 color, vec3 N, vec3 P) {
+    vec3 L = normalize(light.position - P);
+    float cosNL = max(dot(N, L), 0.0);
+    vec3 R = 2 * dot(N, L) * N - L;
+    float cosVRn = pow(max(dot(V, R), 0.0), material.shininess);
+    float cosDLc = pow(max(dot(normalize(-light.direction), L), 0.0), light.cone);
+
+    float distance = length(light.position - P);
+    float attenuation =
+        1.0 / (light.k0 +
+        light.k1 * distance +
+        light.k2 * distance * distance);
+
+    Light res;
+    res.ambient = vec4(light.ambient * material.ambient * attenuation * cosDLc, 1.0);
+    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse * attenuation * cosDLc, 1.0);
+    res.specular = vec4(cosVRn * light.specular * material.specular * attenuation * cosDLc, 1.0);
     return res;
 }

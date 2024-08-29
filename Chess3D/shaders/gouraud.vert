@@ -1,9 +1,10 @@
 ﻿#version 450 core
 
 struct Light{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    vec3 position;
 };
 
 struct Material {
@@ -37,18 +38,8 @@ layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 
-out struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight1;
-out struct {
-    vec4 ambient;
-    vec4 diffuse;
-    vec4 specular;
-    vec3 position;
-} PointLight2;
+out Light PointLight1;
+out Light PointLight2;
 out vec2 TexCoords;
 out vec3 FragPos;
 
@@ -65,17 +56,13 @@ void main() {
     // fragment part
     vec3 V = normalize(cameraPos - worldPos);
 
-    Light l1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
-    PointLight1.ambient = vec4(l1.ambient, 1.0);
-    PointLight1.diffuse = vec4(l1.diffuse, 1.0);
-    PointLight1.specular = vec4(l1.specular, 1.0);
-    PointLight1.position = pointLights[0].position;
+    Light pl1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
+    pl1.position = pointLights[0].position;
+    PointLight1 = pl1;
 
-    Light l2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
-    PointLight2.ambient = vec4(l2.ambient, 1.0);
-    PointLight2.diffuse = vec4(l2.diffuse, 1.0);
-    PointLight2.specular = vec4(l2.specular, 1.0);
-    PointLight2.position = pointLights[1].position;
+    Light pl2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
+    pl2.position = pointLights[1].position;
+    PointLight2 = pl2;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
@@ -91,8 +78,8 @@ Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
         light.k2 * distance * distance);
 
     Light res;
-    res.ambient = light.ambient * material.ambient * attenuation;
-    res.diffuse = cosNL * light.diffuse * material.diffuse * attenuation;
-    res.specular = cosVRn * light.specular * material.specular * attenuation;
+    res.ambient = vec4(light.ambient * material.ambient * attenuation, 1.0);
+    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse * attenuation, 1.0);
+    res.specular = vec4(cosVRn * light.specular * material.specular * attenuation, 1.0);
     return res;
 }
