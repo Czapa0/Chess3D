@@ -3,6 +3,7 @@
 SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, m_camera.Position, 1.0, 0.045, 0.0075, 50.0);
 }
 
 int SceneManager::init() {
@@ -388,6 +389,22 @@ void SceneManager::renderScene() {
     }
     shader->setFloat("farPlane", FAR_PLANE_PL);
     shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
+
+    // spot lights
+    for (int i = 0; i < m_spotLights.size(); i++) {
+        std::string light = "spotLights[" + std::to_string(i) + "]";
+        shader->setVec3(light + ".ambient", m_spotLights[i].ambient);
+        shader->setVec3(light + ".diffuse", m_spotLights[i].diffuse);
+        shader->setVec3(light + ".specular", m_spotLights[i].specular);
+        shader->setVec3(light + ".position", m_spotLights[i].position);
+        shader->setVec3(light + ".direction", m_spotLights[i].direction);
+        shader->setFloat(light + ".k0", m_spotLights[i].constant);
+        shader->setFloat(light + ".k1", m_spotLights[i].linear);
+        shader->setFloat(light + ".k2", m_spotLights[i].quadratic);
+        shader->setFloat(light + ".cone", m_spotLights[i].cone);
+    }
+    shader->setInt("spotLightCount", static_cast<int>(m_spotLights.size()));
+
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);

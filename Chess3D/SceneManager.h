@@ -44,6 +44,7 @@ private:
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
+	std::vector<SpotLight> m_spotLights;
 	unsigned int m_depthCubeMapArrayFBO;
 	unsigned int m_depthCubeMapArrayStatic;
 	unsigned int m_depthCubeMapArray;

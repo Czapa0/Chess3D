@@ -56,11 +56,12 @@ layout(location = 4) in vec3 aFaceNormal;
 
 out Light PointLight1;
 out Light PointLight2;
+out Light SpotLight1;
 out vec2 TexCoords;
 out vec3 FragPos;
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
-Light CalcSpotLight(SpotLight light, vec3 V, vec3 color, vec3 N, vec3 P);
+Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P);
 
 void main() {
     // vertex part
@@ -80,6 +81,10 @@ void main() {
     Light pl2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
     pl2.position = pointLights[1].position;
     PointLight2 = pl2;
+
+    Light sl1 = CalcSpotLight(spotLights[0], V, worldNormal, worldPos);
+    sl1.position = spotLights[0].position;
+    SpotLight1 = sl1;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
@@ -101,7 +106,7 @@ Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
     return res;
 }
 
-Light CalcSpotLight(SpotLight light, vec3 V, vec3 color, vec3 N, vec3 P) {
+Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P) {
     vec3 L = normalize(light.position - P);
     float cosNL = max(dot(N, L), 0.0);
     vec3 R = 2 * dot(N, L) * N - L;
