@@ -40,6 +40,7 @@ private:
 	Shader m_gouraudShader;
 	Shader m_phongShader;
 	Shader m_depthShader;
+	Shader m_skyboxShader;
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
@@ -111,6 +112,7 @@ private:
 	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
 	void renderScene();
 	void renderModels(Shader& shader, RenderType renderMode = RenderType::Everything);
+	void renderSkybox();
 	void animateBlackQueen();
 	int terminate();
 };

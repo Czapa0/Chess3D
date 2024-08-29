@@ -223,6 +223,7 @@ int SceneManager::arrange() {
     m_gouraudShader = Shader("shaders/gouraud.vert", "shaders/gouraud.frag");
     m_phongShader = Shader("shaders/phong.vert", "shaders/phong.frag");
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
+    m_skyboxShader = Shader("shaders/skybox.vert", "shaders/skybox.frag");
 
     // === DATA ===
     if (loadModels()) {
@@ -231,17 +232,18 @@ int SceneManager::arrange() {
     }
 
     std::vector<std::string> faces{
-        "skybox1/1.png",
-        "skybox1/2.png",
-        "skybox1/3.png",
         "skybox1/4.png",
+        "skybox1/2.png",
         "skybox1/5.png",
-        "skybox1/6.png"
+        "skybox1/6.png",
+        "skybox1/1.png",
+        "skybox1/3.png"
     };
     if (m_skybox.loadCubemap(faces)) {
         std::cerr << "Error loading skybox" << std::endl;
         return 1;
     }
+    m_skybox.setupSkybox();
 
     return 0;
 }
@@ -286,6 +288,7 @@ int SceneManager::run() {
         }
 
         renderScene();
+        renderSkybox();
         renderUI();
 
         ImGui::Render();
@@ -417,12 +420,35 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
     }
 }
 
+void SceneManager::renderSkybox()
+{
+    //glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+    glViewport(0, 0, m_width, m_height);
+    m_skyboxShader.use();
+
+    glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetViewMatrix()));
+    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
+
+    //m_skyboxShader.setInt("skybox", 0);
+    m_skyboxShader.setMat4("view", view);
+    m_skyboxShader.setMat4("projection", projection);
+
+    m_skybox.Draw(m_skyboxShader);
+    //glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+}
+
 void SceneManager::animateBlackQueen()
 {
     // TODO: better handling of constatnts
+    // TODO: fix for debug
     // translation borders
-    if (m_blackQueen.modelMatrix[3][0] > 1.4f || m_blackQueen.modelMatrix[3][0] < -0.8f) {
-        m_speedFactor = -m_speedFactor;
+    if (m_blackQueen.modelMatrix[3][0] > 1.4f) {
+        m_speedFactor = -1.0f;
+    }
+    else if (m_blackQueen.modelMatrix[3][0] < -0.8f) {
+        m_speedFactor = 1.0f;
     }
 
     // recalculate mode matrix
