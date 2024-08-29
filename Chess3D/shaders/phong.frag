@@ -21,6 +21,21 @@ struct PointLight {
 uniform int pointLightCount;
 uniform PointLight pointLights[MAX_POINT_LIGHT];
 
+#define MAX_SPOT_LIGHT 5
+struct SpotLight {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 position;
+    vec3 direction;
+    float k0;
+    float k1;
+    float k2;
+    float cone;
+};
+uniform int spotLightCount;
+uniform SpotLight spotLights[MAX_SPOT_LIGHT];
+
 uniform vec3 cameraPos;
 
 uniform float farPlane;
@@ -50,6 +65,7 @@ vec3 sampleOffsetDirections[20] = vec3[]
 );   
 
 vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P, float shadow);
+vec3 CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P, float shadow);
 float CalcShadow(vec3 fragPos, int light, vec3 position);
 float CalcFogFactor(vec3 pos);
 
@@ -62,6 +78,12 @@ void main() {
     for(int i = 0; i < pointLightCount; ++i) {
         float shadow = CalcShadow(Pos, i, pointLights[i].position);
         finalColor += CalcPointLight(pointLights[i], V, Normal, Pos, shadow);
+    }
+
+    // spot lights
+    for(int i = 0; i < spotLightCount; ++i) {
+        float shadow = 0.0;
+        finalColor += CalcSpotLight(spotLights[i], V, Normal, Pos, shadow);
     }
 
     // fog
@@ -87,6 +109,25 @@ vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P, float shadow) {
     vec3 diffuse = cosNL * light.diffuse * material.diffuse * vec3(texture(texture_diffuse0, TexCoords)) * attenuation;
     vec3 specular = cosVRn * light.specular * material.specular * vec3(texture(texture_specular0, TexCoords)) * attenuation;
     return (1.0 - shadow) * (specular + diffuse) + ambient;
+}
+
+vec3 CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P, float shadow) {
+    vec3 L = normalize(light.position - P);
+    float cosNL = max(dot(N, L), 0.0);
+    vec3 R = 2 * dot(N, L) * N - L;
+    float cosVRn = pow(max(dot(V, R), 0.0), material.shininess);
+    float cosDLc = pow(max(dot(normalize(-light.direction), L), 0.0), light.cone);
+
+    float distance = length(light.position - P);
+    float attenuation =
+        1.0 / (light.k0 +
+        light.k1 * distance +
+        light.k2 * distance * distance);
+
+    vec3 ambient = light.ambient * material.ambient * vec3(texture(texture_ambient0, TexCoords)) * attenuation * cosDLc;
+    vec3 diffuse = cosNL * light.diffuse * material.diffuse * vec3(texture(texture_diffuse0, TexCoords)) * attenuation * cosDLc;
+    vec3 specular = cosVRn * light.specular * material.specular * vec3(texture(texture_specular0, TexCoords)) * attenuation * cosDLc;
+    return ambient + (1.0f - shadow) * (diffuse + specular);
 }
 
 float CalcShadow(vec3 fragPos, int light, vec3 position)
