@@ -1,9 +1,11 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, -3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, -3.0f, 1.0f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, m_camera.Position, 1.0, 0.045, 0.0075, 50.0);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, m_camera.Position + glm::vec3(1.0f, 1.0f, 0.0f), 1.0, 0.045, 0.0075, 50.0);
+
 }
 
 int SceneManager::init() {
@@ -299,7 +301,7 @@ int SceneManager::run() {
         std::ostringstream ss;
         ss << "[";
         ss.precision(0);
-        ss << std::fixed << ImGui::GetIO().Framerate; // TODO: add FPS
+        ss << std::fixed << ImGui::GetIO().Framerate;
         ss << " FPS] " << m_title;
         glfwSetWindowTitle(m_window, ss.str().c_str());
         moveCamera();
@@ -344,9 +346,6 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light, RenderType 
 
     glClear(GL_DEPTH_BUFFER_BIT);
     m_depthShader.use();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.1));
-    m_depthShader.setMat4("modelMatrix", model);
     m_depthShader.setVec3("lightPos", light.position);
     m_depthShader.setFloat("farPlane", FAR_PLANE_PL);
 
@@ -378,14 +377,11 @@ void SceneManager::renderSpotlightDepthMap(const SpotLight& light)
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthArrayFBO);
 
-    glClear(GL_DEPTH_BUFFER_BIT);
     m_depthShader_SL.use();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.1));
-    m_depthShader_SL.setMat4("model", model);
     m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformations[0]);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthArray, 0, light.id);
+    glClear(GL_DEPTH_BUFFER_BIT);
     renderModels(m_depthShader_SL, RenderType::Everything);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
@@ -458,12 +454,16 @@ void SceneManager::renderScene() {
         shader->setFloat(light + ".k1", m_spotLights[i].linear);
         shader->setFloat(light + ".k2", m_spotLights[i].quadratic);
         shader->setFloat(light + ".cone", m_spotLights[i].cone);
+        shader->setMat4(light + ".lightSpaceMatrix", m_spotLights[i].shadowTransformations[0]);
     }
     shader->setInt("spotLightCount", static_cast<int>(m_spotLights.size()));
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glUniform1i(glGetUniformLocation(shader->ID, "depthMapSL"), 1);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthArray);
 
     // draw scene
     renderModels(*shader);

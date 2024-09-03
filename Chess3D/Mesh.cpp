@@ -18,7 +18,7 @@ void Mesh::Draw(Shader& shader) // TODO: better handling of depth textures
     unsigned int ambientNr = 0;
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i + 1); // active proper texture unit before binding
+        glActiveTexture(GL_TEXTURE0 + i + 2); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
         std::string number;
         std::string name = textures[i].type;
@@ -29,8 +29,8 @@ void Mesh::Draw(Shader& shader) // TODO: better handling of depth textures
         else if (name == "texture_ambient")
             number = std::to_string(ambientNr++); // transfer unsigned int to string
 
-        // now set the sampler to the correct texture unit (add 1 since GL_TEXTURE0 is bound to depth map)
-        glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i + 1);
+        // now set the sampler to the correct texture unit (add 2 since GL_TEXTURE0 and GL_TEXTURE0+1 are bound to depth maps)
+        glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i + 2);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
