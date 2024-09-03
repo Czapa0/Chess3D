@@ -5,10 +5,12 @@
 
 Light::Light(glm::vec3 ambient,
     glm::vec3 diffuse,
-    glm::vec3 specular) :
+    glm::vec3 specular,
+    unsigned int id) :
     ambient(ambient),
     diffuse(diffuse),
-    specular(specular) { }
+    specular(specular),
+    id(id) { }
 
 unsigned int PointLight::pointLightCount = 0;
 
@@ -19,16 +21,18 @@ PointLight::PointLight(glm::vec3 ambient,
     float constant,
     float linear,
     float quadratic) :
-    Light(ambient, diffuse, specular),
-    id(pointLightCount++), position(position), constant(constant), linear(linear), quadratic(quadratic) {
+    Light(ambient, diffuse, specular, pointLightCount++),
+    position(position), constant(constant), linear(linear), quadratic(quadratic) {
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, NEAR_PLANE_PL, FAR_PLANE_PL);
-    shadowTransformataions[0] = shadowProj * glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    shadowTransformataions[1] = shadowProj * glm::lookAt(position, position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    shadowTransformataions[2] = shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    shadowTransformataions[3] = shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-    shadowTransformataions[4] = shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    shadowTransformataions[5] = shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
 }
+
+unsigned int SpotLight::spotlightCount = 0;
 
 SpotLight::SpotLight(glm::vec3 ambient,
     glm::vec3 diffuse,
@@ -39,5 +43,8 @@ SpotLight::SpotLight(glm::vec3 ambient,
     float linear,
     float quadratic,
     float cone) :
-    PointLight(ambient, diffuse, specular, position, constant, linear, quadratic),
-    direction(direction), cone(cone) { }
+    Light(ambient, diffuse, specular, spotlightCount++),
+    position(position), constant(constant), linear(linear), quadratic(quadratic), direction(direction), cone(cone) {
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, NEAR_PLANE_PL, FAR_PLANE_PL);
+    shadowTransformations.push_back(shadowProj * glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+}

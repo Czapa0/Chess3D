@@ -66,6 +66,9 @@
     <ClCompile Include="Callbacks.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -101,6 +104,9 @@
     <ClInclude Include="RenderType.h">
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\gouraud.frag">
@@ -125,6 +131,14 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\flat.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\skybox.frag" />
+    <None Include="shaders\skybox.vert" />
+    <None Include="shaders\depthSL.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\depthSL.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

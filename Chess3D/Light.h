@@ -3,7 +3,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
-#include <array>
+#include <vector>
 
 constexpr unsigned int SHADOW_WIDTH = 1024;
 constexpr unsigned int SHADOW_HEIGHT = 1024;
@@ -12,6 +12,8 @@ constexpr float NEAR_PLANE_PL = 1.0f;
 constexpr float FAR_PLANE_PL = 35.0f;
 
 struct Light {
+    unsigned int id;
+
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
@@ -19,12 +21,12 @@ struct Light {
     Light() = default;
     Light(glm::vec3 ambient,
         glm::vec3 diffuse,
-        glm::vec3 specular);
+        glm::vec3 specular,
+        unsigned int id);
 };
 
 struct PointLight : Light {
     static unsigned int pointLightCount;
-    unsigned int id;
 
     glm::vec3 position;
 
@@ -32,7 +34,7 @@ struct PointLight : Light {
     float linear;
     float quadratic;
 
-    std::array<glm::mat4, 6> shadowTransformataions;
+    std::vector<glm::mat4> shadowTransformations;
 
     PointLight() = default;
     PointLight(glm::vec3 ambient,
@@ -44,7 +46,17 @@ struct PointLight : Light {
         float quadratic);
 };
 
-struct SpotLight : PointLight {
+struct SpotLight : Light {
+    static unsigned int spotlightCount;
+
+    glm::vec3 position;
+
+    float constant;
+    float linear;
+    float quadratic;
+
+    std::vector<glm::mat4> shadowTransformations;
+
     glm::vec3 direction;
     float cone;
 

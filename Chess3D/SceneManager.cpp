@@ -32,7 +32,8 @@ int SceneManager::init() {
         return 1;
     }
 
-    initShadowMapping();
+    initPointLightShadowMapping();
+    initSpotLightShadowMapping();
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -121,7 +122,7 @@ int SceneManager::loadModels() {
     return 0;
 }
 
-void SceneManager::initShadowMapping()
+void SceneManager::initPointLightShadowMapping()
 {
     // init depth map array FBO
     glGenFramebuffers(1, &m_depthCubeMapArrayFBO);
@@ -163,6 +164,37 @@ void SceneManager::initShadowMapping()
     // bind depth cube to FBO as depth attatchment
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthCubeMapArrayFBO);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubeMapArrayStatic, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+
+    auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneManager::initSpotLightShadowMapping()
+{
+    // init depth map array FBO
+    glGenFramebuffers(1, &m_depthArrayFBO);
+
+    // init depth map array
+    glGenTextures(1, &m_depthArray);
+
+    // allocate storage
+    glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthArray);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_DEPTH_COMPONENT24, SHADOW_WIDTH, SHADOW_HEIGHT, m_spotLights.size());
+
+    // parameters
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // bind depth cube to FBO as depth attatchment
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthArrayFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthArray, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
@@ -224,6 +256,7 @@ int SceneManager::arrange() {
     m_gouraudShader = Shader("shaders/gouraud.vert", "shaders/gouraud.frag");
     m_phongShader = Shader("shaders/phong.vert", "shaders/phong.frag");
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
+    m_depthShader_SL = Shader("shaders/depthSL.vert", "shaders/depthSL.frag");
     m_skyboxShader = Shader("shaders/skybox.vert", "shaders/skybox.frag");
 
     // === DATA ===
@@ -287,6 +320,9 @@ int SceneManager::run() {
         for (const PointLight& light : m_pointLights) {
             renderPointLightDepthMap(light, RenderType::Dynamic);
         }
+        for (const SpotLight& light : m_spotLights) {
+            renderSpotlightDepthMap(light);
+        }
 
         renderScene();
         renderSkybox();
@@ -328,9 +364,29 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light, RenderType 
         auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
-        m_depthShader.setMat4("viewMatrix", light.shadowTransformataions[i]);
+        m_depthShader.setMat4("viewMatrix", light.shadowTransformations[i]);
         renderModels(m_depthShader, renderMode);
     }
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneManager::renderSpotlightDepthMap(const SpotLight& light)
+{
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthArrayFBO);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_depthShader_SL.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(0.1));
+    m_depthShader_SL.setMat4("model", model);
+    m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformations[0]);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthArray, 0, light.id);
+    renderModels(m_depthShader_SL, RenderType::Everything);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

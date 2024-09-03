@@ -155,6 +155,8 @@
   <ItemGroup>
     <None Include="shaders\depth.frag" />
     <None Include="shaders\depth.vert" />
+    <None Include="shaders\depthSL.frag" />
+    <None Include="shaders\depthSL.vert" />
     <None Include="shaders\flat.frag" />
     <None Include="shaders\flat.vert" />
     <None Include="shaders\gouraud.frag" />

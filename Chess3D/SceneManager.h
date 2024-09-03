@@ -40,14 +40,21 @@ private:
 	Shader m_gouraudShader;
 	Shader m_phongShader;
 	Shader m_depthShader;
+	Shader m_depthShader_SL;
 	Shader m_skyboxShader;
 
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
 	std::vector<SpotLight> m_spotLights;
+
+	// === DEPTH MAPPING ===
+	// point lights
 	unsigned int m_depthCubeMapArrayFBO;
 	unsigned int m_depthCubeMapArrayStatic;
 	unsigned int m_depthCubeMapArray;
+	// spot lights
+	unsigned int m_depthArrayFBO;
+	unsigned int m_depthArray;
 
 	// === FOG ===
 	bool m_fogActive = false;
@@ -107,10 +114,12 @@ private:
 	// === METHODS ===
 	int arrange();
 	int loadModels();
-	void initShadowMapping();
+	void initPointLightShadowMapping();
+	void initSpotLightShadowMapping();
 	void moveCamera();
 	void renderUI();
 	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
+	void renderSpotlightDepthMap(const SpotLight& light);
 	void renderScene();
 	void renderModels(Shader& shader, RenderType renderMode = RenderType::Everything);
 	void renderSkybox();
