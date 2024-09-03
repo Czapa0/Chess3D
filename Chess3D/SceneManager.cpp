@@ -1,8 +1,8 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, -3.0f, 1.0f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, -3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.0f, 3.0f, 1.0f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, m_camera.Position, 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, m_camera.Position + glm::vec3(1.0f, 1.0f, 0.0f), 1.0, 0.045, 0.0075, 50.0);
 
@@ -319,12 +319,14 @@ int SceneManager::run() {
             m_depthCubeMapArray, GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0,
             SHADOW_WIDTH, SHADOW_HEIGHT, 6 * m_pointLights.size());
 
+        glCullFace(GL_FRONT);
         for (const PointLight& light : m_pointLights) {
             renderPointLightDepthMap(light, RenderType::Dynamic);
         }
         for (const SpotLight& light : m_spotLights) {
             renderSpotlightDepthMap(light);
         }
+        glCullFace(GL_BACK);
 
         renderScene();
         renderSkybox();
