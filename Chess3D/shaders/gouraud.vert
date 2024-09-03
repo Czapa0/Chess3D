@@ -5,6 +5,7 @@ struct Light{
     vec4 diffuse;
     vec4 specular;
     vec3 position;
+    vec4 fragPosLightSpace;
 };
 
 struct Material {
@@ -39,6 +40,7 @@ struct SpotLight {
     float k1;
     float k2;
     float cone;
+    mat4 lightSpaceMatrix;
 };
 uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
@@ -56,6 +58,7 @@ layout(location = 2) in vec2 aTexCoord;
 out Light PointLight1;
 out Light PointLight2;
 out Light SpotLight1;
+out Light SpotLight2;
 out vec2 TexCoords;
 out vec3 FragPos;
 
@@ -83,7 +86,13 @@ void main() {
 
     Light sl1 = CalcSpotLight(spotLights[0], V, worldNormal, worldPos);
     sl1.position = spotLights[0].position;
+    sl1.fragPosLightSpace = spotLights[0].lightSpaceMatrix * vec4(worldPos, 1.0f);
     SpotLight1 = sl1;
+
+    Light sl2 = CalcSpotLight(spotLights[1], V, worldNormal, worldPos);
+    sl2.position = spotLights[1].position;
+    sl2.fragPosLightSpace = spotLights[1].lightSpaceMatrix * vec4(worldPos, 1.0f);
+    SpotLight2 = sl2;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
