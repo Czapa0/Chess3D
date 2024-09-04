@@ -321,10 +321,10 @@ int SceneManager::run() {
             m_depthCubeMapArray, GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0,
             SHADOW_WIDTH, SHADOW_HEIGHT, 6 * m_pointLights.size());
 
-        glCullFace(GL_FRONT);
         for (const PointLight& light : m_pointLights) {
             renderPointLightDepthMap(light, RenderType::Dynamic);
         }
+        glCullFace(GL_FRONT);
         for (const SpotLight& light : m_spotLights) {
             renderSpotlightDepthMap(light);
         }
