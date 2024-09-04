@@ -64,7 +64,27 @@ vec3 sampleOffsetDirections[20] = vec3[]
    vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
    vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
    vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
-);   
+);
+
+int diskSize = 16;
+vec2 poissonDisk[] = vec2[](
+   vec2( -0.94201624, -0.39906216 ), 
+   vec2( 0.94558609, -0.76890725 ), 
+   vec2( -0.094184101, -0.92938870 ), 
+   vec2( 0.34495938, 0.29387760 ), 
+   vec2( -0.91588581, 0.45771432 ), 
+   vec2( -0.81544232, -0.87912464 ), 
+   vec2( -0.38277543, 0.27676845 ), 
+   vec2( 0.97484398, 0.75648379 ), 
+   vec2( 0.44323325, -0.97511554 ), 
+   vec2( 0.53742981, -0.47373420 ), 
+   vec2( -0.26496911, -0.41893023 ), 
+   vec2( 0.79197514, 0.19090188 ), 
+   vec2( -0.24188840, 0.99706507 ), 
+   vec2( -0.81409955, 0.91437590 ), 
+   vec2( 0.19984126, 0.78641367 ), 
+   vec2( 0.14383161, -0.14100790 ) 
+);
 
 vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P, float shadow);
 vec3 CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P, float shadow);
@@ -168,20 +188,14 @@ float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position){
     vec3 lightDir = normalize(position - Pos);
     float bias = max(0.05 * (1.0 - dot(Normal, lightDir)), 0.005);
     bias = 0.0f;
-    // check whether current frag pos is in shadow
-    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-//    // PCF
-//    float shadow = 0.0;
-//    vec2 texelSize = 1.0 / vec2(textureSize(depthMapSL, 0)); // ???
-//    for(int x = -1; x <= 1; ++x)
-//    {
-//        for(int y = -1; y <= 1; ++y)
-//        {
-//            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-//            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-//        }    
-//    }
-//    shadow /= 9.0;
+    // PCF
+    float shadow = 0.0;
+    float spreadInv = 1.0 / 700.0;
+    for (int i = 0; i < diskSize; ++i) {
+       float pcfDepth = texture(depthMapSL, vec3(projCoords.xy + poissonDisk[i] * spreadInv, light)).r; 
+       shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+    }
+    shadow /= diskSize;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
