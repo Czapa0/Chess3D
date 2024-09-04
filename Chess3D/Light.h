@@ -8,8 +8,8 @@
 constexpr unsigned int SHADOW_WIDTH = 1024;
 constexpr unsigned int SHADOW_HEIGHT = 1024;
 
-constexpr float NEAR_PLANE_PL = 1.0f;
-constexpr float FAR_PLANE_PL = 35.0f;
+constexpr float NEAR_PLANE_PL = 0.1f;
+constexpr float FAR_PLANE_PL = 5.0f;
 
 struct Light {
     unsigned int id;
