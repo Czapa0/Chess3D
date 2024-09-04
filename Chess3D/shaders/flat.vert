@@ -52,6 +52,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
 layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec3 aTriPos;
 layout(location = 4) in vec3 aFaceNormal;
@@ -62,6 +63,7 @@ out Light SpotLight1;
 out Light SpotLight2;
 out vec2 TexCoords;
 out vec3 FragPos;
+out vec3 FragNormal;
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
 Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P);
@@ -70,7 +72,8 @@ void main() {
     // vertex part
     TexCoords = aTexCoord;
 	vec3 worldPos = vec3(modelMatrix * vec4(aTriPos, 1.0));
-    FragPos = vec3(modelMatrix * vec4(aPos, 1.0));;
+    FragPos = vec3(modelMatrix * vec4(aPos, 1.0));
+    FragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * aNormal);
     vec3 worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * aFaceNormal);
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 

@@ -14,6 +14,7 @@ in Light SpotLight1;
 in Light SpotLight2;
 in vec2 TexCoords;
 in vec3 FragPos;
+in vec3 FragNormal;
 
 uniform samplerCubeArray depthMap;
 uniform sampler2DArray depthMapSL;
@@ -112,7 +113,7 @@ float ShadowCalculation(vec3 fragPos, int light, vec3 position)
     float currentDepth = length(fragToLight);
 
     float shadow = 0.0;
-    float bias   = 0.05;
+    float bias   = max(0.1 * (1.0 - dot(FragNormal, -normalize(fragToLight))), 0.05);
     int samples  = 20;
     float viewDistance = length(cameraPos - FragPos);
     float diskRadius = (1.0 + (viewDistance / farPlane)) / 100.0;

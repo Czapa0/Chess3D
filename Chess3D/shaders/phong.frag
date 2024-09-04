@@ -160,7 +160,7 @@ float CalcShadow(vec3 fragPos, int light, vec3 position)
     float currentDepth = length(fragToLight);
 
     float shadow = 0.0;
-    float bias   = 0.05;
+    float bias   = max(0.1 * (1.0 - dot(Normal, -normalize(fragToLight))), 0.05);
     int samples  = 20;
     float viewDistance = length(cameraPos - Pos);
     float diskRadius = (1.0 + (viewDistance / farPlane)) / 100.0;

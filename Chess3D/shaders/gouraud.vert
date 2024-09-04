@@ -61,6 +61,7 @@ out Light SpotLight1;
 out Light SpotLight2;
 out vec2 TexCoords;
 out vec3 FragPos;
+out vec3 FragNormal;
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
 Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P);
@@ -71,6 +72,7 @@ void main() {
 	vec3 worldPos = vec3(modelMatrix * vec4(aPos, 1.0));
     FragPos = worldPos;
     vec3 worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * aNormal);
+    FragNormal = worldNormal;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 
     // fragment part
