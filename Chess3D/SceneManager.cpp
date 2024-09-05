@@ -4,7 +4,7 @@ SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, -1.0f, -1.35f), 1.0, 0.045, 0.0075);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, -1.0f, 1.35f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
-    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, -m_camera.Position + glm::vec3(1.0f, -1.0f, -2.0f), 1.0, 0.045, 0.0075, 50.0);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
 }
 
 int SceneManager::init() {
@@ -545,13 +545,15 @@ void SceneManager::animateBlackQueen()
 
     // spotlight
     glm::mat4 tmp = glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(10.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::vec3 p1(0.0f, 0.0f, 17.0f);
-    glm::vec3 p2(p1 + glm::vec3(tmp * glm::vec4(m_spotLights[0].initialDirection, 1.0f)));
-    p1 = model * glm::vec4(p1, 1.0f);
-    p2 = model * glm::vec4(p2, 1.0f);
-    m_spotLights[0].position = p1;
-    m_spotLights[0].direction = p2 - p1;
-    m_spotLights[0].updateShadowTransformation();
+    for (SpotLight& light : m_spotLights) {
+        glm::vec3 p1(0.0f, 0.0f, 17.0f);
+        glm::vec3 p2(p1 + glm::vec3(tmp * glm::vec4(light.initialDirection, 1.0f)));
+        p1 = model * glm::vec4(p1, 1.0f);
+        p2 = model * glm::vec4(p2, 1.0f);
+        light.position = p1;
+        light.direction = p2 - p1;
+        light.updateShadowTransformation();
+    }
 }
 
 int SceneManager::terminate() {
