@@ -1,10 +1,12 @@
 #include "SceneManager.h"
 
-SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
+SceneManager::SceneManager() : m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), 
+    m_staticCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.045, 0.0075);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
+    m_activeCamera = &m_freeRoamCamera;
 }
 
 int SceneManager::init() {
@@ -210,16 +212,16 @@ void SceneManager::initSpotLightShadowMapping()
 
 void SceneManager::moveCamera() {
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
-        m_camera.ProcessKeyboard(FORWARD, m_deltaTime);
+        m_freeRoamCamera.ProcessKeyboard(FORWARD, m_deltaTime);
     }
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
-        m_camera.ProcessKeyboard(BACKWARD, m_deltaTime);
+        m_freeRoamCamera.ProcessKeyboard(BACKWARD, m_deltaTime);
     }
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
-        m_camera.ProcessKeyboard(LEFT, m_deltaTime);
+        m_freeRoamCamera.ProcessKeyboard(LEFT, m_deltaTime);
     }
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
-        m_camera.ProcessKeyboard(RIGHT, m_deltaTime);
+        m_freeRoamCamera.ProcessKeyboard(RIGHT, m_deltaTime);
     }
 }
 
@@ -248,6 +250,19 @@ void SceneManager::renderUI()
     ImGui::Checkbox("Active", &m_fogActive);
     ImGui::SliderFloat("Intensity", &m_fogIntensity, 0.0f, 1.0f);
     ImGui::SliderInt("Color", &m_fogColor, 0, 255);
+    ImGui::EndGroup();
+    ImGui::Separator();
+
+    ImGui::BeginGroup();
+    ImGui::Text("Camera");
+    if (ImGui::RadioButton("Free roam", m_cameraType == CameraType::FreeRoam)) {
+        m_cameraType = CameraType::FreeRoam;
+        m_activeCamera = &m_freeRoamCamera;
+    }
+    if (ImGui::RadioButton("Static", m_cameraType == CameraType::Static)) {
+        m_cameraType = CameraType::Static;
+        m_activeCamera = &m_staticCamera;
+    }
     ImGui::EndGroup();
 
     ImGui::End();
@@ -305,7 +320,11 @@ int SceneManager::run() {
         ss << std::fixed << ImGui::GetIO().Framerate;
         ss << " FPS] " << m_title;
         glfwSetWindowTitle(m_window, ss.str().c_str());
-        moveCamera();
+
+        if (m_cameraType == CameraType::FreeRoam) {
+            moveCamera();
+        }
+        
         animateBlackQueen();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -395,8 +414,8 @@ void SceneManager::renderScene() {
     glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
-    glm::mat4 view = m_camera.GetViewMatrix();
+    glm::mat4 projection = glm::perspective(glm::radians(m_activeCamera->Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
+    glm::mat4 view = m_activeCamera->GetViewMatrix();
 
     Shader* shader = &m_phongShader;
     switch (m_shadingType)
@@ -417,7 +436,7 @@ void SceneManager::renderScene() {
     shader->use();
     shader->setMat4("projMatrix", projection);
     shader->setMat4("viewMatrix", view);
-    shader->setVec3("cameraPos", m_camera.Position);
+    shader->setVec3("cameraPos", m_activeCamera->Position);
 
     // fog
     shader->setFloat("fogIntensity", m_fogIntensity);
@@ -502,8 +521,8 @@ void SceneManager::renderSkybox()
     glViewport(0, 0, m_width, m_height);
     m_skyboxShader.use();
 
-    glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetViewMatrix()));
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
+    glm::mat4 view = glm::mat4(glm::mat3(m_freeRoamCamera.GetViewMatrix()));
+    glm::mat4 projection = glm::perspective(glm::radians(m_freeRoamCamera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
 
     m_skyboxShader.setMat4("view", view);
     m_skyboxShader.setMat4("projection", projection);

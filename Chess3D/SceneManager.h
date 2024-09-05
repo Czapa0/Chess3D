@@ -18,6 +18,7 @@ constexpr float ANIMATION_ANGLE = 30.0;
 #include "WindowMode.h"
 #include "ShadingType.h"
 #include "RenderType.h"
+#include "CameraType.h"
 #include "Light.h"
 #include "Callbacks.h"
 #include "Skybox.h"
@@ -77,7 +78,10 @@ private:
 	float m_rotation = 0.0;
 
 	// === CAMERA ===
-	Camera m_camera;
+	CameraType m_cameraType = CameraType::FreeRoam;
+	Camera* m_activeCamera;
+	Camera m_freeRoamCamera;
+	Camera m_staticCamera;
 	float m_lastX = m_width / 2.0f;
 	float m_lastY = m_height / 2.0f;
 	float m_lastXPull = m_width / 2.0f;

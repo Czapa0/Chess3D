@@ -28,10 +28,12 @@ void cursor_pos_callback(GLFWwindow* window, double xposIn, double yposIn) {
         // reversed since y-coordinates go from bottom to top
         float yoffset = (context->m_lastYPull - ypos) / mouseMovementOffsetDivisor;
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            context->m_camera.ProcessMouseMovementAndChangePosition(xoffset, yoffset, context->m_range);
+            if (context->m_cameraType == CameraType::FreeRoam) {
+                context->m_freeRoamCamera.ProcessMouseMovementAndChangePosition(xoffset, yoffset, context->m_range);
+            }
         }
         else {
-            context->m_camera.ProcessMouseMovement(xoffset, yoffset);
+            context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
         }
     }
 
@@ -39,7 +41,7 @@ void cursor_pos_callback(GLFWwindow* window, double xposIn, double yposIn) {
         float xoffset = xpos - context->m_lastX;
         // reversed since y-coordinates go from bottom to top
         float yoffset = context->m_lastY - ypos;
-        context->m_camera.ProcessMouseMovement(xoffset, yoffset);
+        context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
     }
 
     context->m_lastX = xpos;
@@ -68,10 +70,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     SceneManager* context = static_cast<SceneManager*>(glfwGetWindowUserPointer(window));
     if (key == GLFW_KEY_LEFT_SHIFT) {
         if (action == GLFW_PRESS) {
-            context->m_camera.MovementSpeed = context->m_camera.MovementSpeed_Fast;
+            context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Fast;
         }
         if (action == GLFW_RELEASE) {
-            context->m_camera.MovementSpeed = context->m_camera.MovementSpeed_Slow;
+            context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Slow;
         }
     }
 
