@@ -1,9 +1,9 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : m_camera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
-    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, -m_camera.Position, 1.0, 0.045, 0.0075, 50.0);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, -1.0f, -1.35f), 1.0, 0.045, 0.0075);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, -1.0f, 1.35f), 1.0, 0.045, 0.0075);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), m_camera.Front, -m_camera.Position + glm::vec3(1.0f, -1.0f, -2.0f), 1.0, 0.045, 0.0075, 50.0);
 }
 
@@ -381,7 +381,7 @@ void SceneManager::renderSpotlightDepthMap(const SpotLight& light)
     glBindFramebuffer(GL_FRAMEBUFFER, m_depthArrayFBO);
 
     m_depthShader_SL.use();
-    m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformations[0]);
+    m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformation);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthArray, 0, light.id);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -457,7 +457,7 @@ void SceneManager::renderScene() {
         shader->setFloat(light + ".k1", m_spotLights[i].linear);
         shader->setFloat(light + ".k2", m_spotLights[i].quadratic);
         shader->setFloat(light + ".cone", m_spotLights[i].cone);
-        shader->setMat4(light + ".lightSpaceMatrix", m_spotLights[i].shadowTransformations[0]);
+        shader->setMat4(light + ".lightSpaceMatrix", m_spotLights[i].shadowTransformation);
     }
     shader->setInt("spotLightCount", static_cast<int>(m_spotLights.size()));
 
@@ -498,7 +498,6 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 
 void SceneManager::renderSkybox()
 {
-    //glDepthMask(GL_FALSE);
     glDepthFunc(GL_LEQUAL);
     glViewport(0, 0, m_width, m_height);
     m_skyboxShader.use();
@@ -506,12 +505,10 @@ void SceneManager::renderSkybox()
     glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetViewMatrix()));
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
 
-    //m_skyboxShader.setInt("skybox", 0);
     m_skyboxShader.setMat4("view", view);
     m_skyboxShader.setMat4("projection", projection);
 
     m_skybox.Draw(m_skyboxShader);
-    //glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
 }
 
@@ -545,6 +542,16 @@ void SceneManager::animateBlackQueen()
     model = glm::translate(model, glm::vec3(m_translation, 0.0f, 0.0f));
     model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
     m_blackQueen.modelMatrix = model;
+
+    // spotlight
+    glm::mat4 tmp = glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(10.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::vec3 p1(0.0f, 0.0f, 17.0f);
+    glm::vec3 p2(p1 + glm::vec3(tmp * glm::vec4(m_spotLights[0].initialDirection, 1.0f)));
+    p1 = model * glm::vec4(p1, 1.0f);
+    p2 = model * glm::vec4(p2, 1.0f);
+    m_spotLights[0].position = p1;
+    m_spotLights[0].direction = p2 - p1;
+    m_spotLights[0].updateShadowTransformation();
 }
 
 int SceneManager::terminate() {

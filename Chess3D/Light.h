@@ -55,9 +55,11 @@ struct SpotLight : Light {
     float linear;
     float quadratic;
 
-    std::vector<glm::mat4> shadowTransformations;
+    glm::mat4 shadowProjMat;
+    glm::mat4 shadowTransformation;
 
     glm::vec3 direction;
+    glm::vec3 initialDirection;
     float cone;
 
     SpotLight() = default;
@@ -70,5 +72,6 @@ struct SpotLight : Light {
         float linear,
         float quadratic,
         float cone);
+    void updateShadowTransformation();
 };
 #endif

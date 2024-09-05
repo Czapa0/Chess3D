@@ -44,7 +44,15 @@ SpotLight::SpotLight(glm::vec3 ambient,
     float quadratic,
     float cone) :
     Light(ambient, diffuse, specular, spotlightCount++),
-    position(position), constant(constant), linear(linear), quadratic(quadratic), direction(direction), cone(cone) {
-    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, NEAR_PLANE_PL, FAR_PLANE_PL);
-    shadowTransformations.push_back(shadowProj * glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    position(position), constant(constant), linear(linear), quadratic(quadratic), direction(direction), initialDirection(direction), cone(cone) {
+    shadowProjMat = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, NEAR_PLANE_PL, FAR_PLANE_PL);
+    updateShadowTransformation();
+}
+
+void SpotLight::updateShadowTransformation()
+{
+    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 right = glm::cross(direction, worldUp);
+    glm::vec3 up = glm::cross(right, direction);
+    shadowTransformation = shadowProjMat * glm::lookAt(position, position + direction, glm::normalize(up));
 }
