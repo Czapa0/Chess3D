@@ -1,7 +1,9 @@
 #include "SceneManager.h"
 
-SceneManager::SceneManager() : m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), 
-    m_staticCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
+SceneManager::SceneManager() : 
+    m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), 
+    m_staticCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_followPoint(0.0f, 0.0f, 0.0f),
+    m_followCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.045, 0.0075);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
@@ -262,6 +264,10 @@ void SceneManager::renderUI()
     if (ImGui::RadioButton("Static", m_cameraType == CameraType::Static)) {
         m_cameraType = CameraType::Static;
         m_activeCamera = &m_staticCamera;
+    }
+    if (ImGui::RadioButton("Following", m_cameraType == CameraType::Following)) {
+        m_cameraType = CameraType::Following;
+        m_activeCamera = &m_followCamera;
     }
     ImGui::EndGroup();
 
@@ -572,6 +578,17 @@ void SceneManager::animateBlackQueen()
         light.position = p1;
         light.direction = p2 - p1;
         light.updateShadowTransformation();
+    }
+
+    // followign camera
+    // TODO: bugged rotation of scene
+    if (m_cameraType == CameraType::Following) {
+        glm::vec3 point = model * glm::vec4(m_followPoint, 1.0f);
+        glm::vec3 front = glm::normalize(point - m_followCamera.Position);
+        glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+        glm::vec3 up = glm::normalize(glm::cross(right, front));
+        m_followCamera.Front = front;
+        m_followCamera.Up = up;
     }
 }
 

@@ -82,6 +82,10 @@ private:
 	Camera* m_activeCamera;
 	Camera m_freeRoamCamera;
 	Camera m_staticCamera;
+	Camera m_followCamera;
+
+	glm::vec3 m_followPoint;
+
 	float m_lastX = m_width / 2.0f;
 	float m_lastY = m_height / 2.0f;
 	float m_lastXPull = m_width / 2.0f;

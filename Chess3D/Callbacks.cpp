@@ -33,7 +33,9 @@ void cursor_pos_callback(GLFWwindow* window, double xposIn, double yposIn) {
             }
         }
         else {
-            context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
+            if (context->m_cameraType != CameraType::Following) {
+                context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
+            }
         }
     }
 
@@ -41,7 +43,9 @@ void cursor_pos_callback(GLFWwindow* window, double xposIn, double yposIn) {
         float xoffset = xpos - context->m_lastX;
         // reversed since y-coordinates go from bottom to top
         float yoffset = context->m_lastY - ypos;
-        context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
+        if (context->m_cameraType != CameraType::Following) {
+            context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
+        }
     }
 
     context->m_lastX = xpos;
@@ -70,10 +74,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     SceneManager* context = static_cast<SceneManager*>(glfwGetWindowUserPointer(window));
     if (key == GLFW_KEY_LEFT_SHIFT) {
         if (action == GLFW_PRESS) {
-            context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Fast;
+            if (context->m_cameraType != CameraType::Following) {
+                context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Fast;
+            }
         }
         if (action == GLFW_RELEASE) {
-            context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Slow;
+            if (context->m_cameraType != CameraType::Following) {
+                context->m_activeCamera->MovementSpeed = context->m_activeCamera->MovementSpeed_Slow;
+            }
         }
     }
 
