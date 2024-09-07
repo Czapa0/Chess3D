@@ -83,6 +83,7 @@ private:
 	Camera m_freeRoamCamera;
 	Camera m_staticCamera;
 	Camera m_followCamera;
+	Camera m_firstPersonCamera;
 
 	glm::vec3 m_followPoint;
 

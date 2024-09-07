@@ -67,7 +67,7 @@
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,11 +104,11 @@
     <ClInclude Include="RenderType.h">
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CameraType.h">
       <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files\Visualization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

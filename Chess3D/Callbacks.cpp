@@ -33,7 +33,7 @@ void cursor_pos_callback(GLFWwindow* window, double xposIn, double yposIn) {
             }
         }
         else {
-            if (context->m_cameraType != CameraType::Following) {
+            if (context->m_cameraType != CameraType::Following && context->m_cameraType != CameraType::FirstPerson) {
                 context->m_activeCamera->ProcessMouseMovement(xoffset, yoffset);
             }
         }

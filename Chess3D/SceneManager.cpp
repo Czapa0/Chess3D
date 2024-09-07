@@ -269,6 +269,10 @@ void SceneManager::renderUI()
         m_cameraType = CameraType::Following;
         m_activeCamera = &m_followCamera;
     }
+    if (ImGui::RadioButton("First Person", m_cameraType == CameraType::FirstPerson)) {
+        m_cameraType = CameraType::FirstPerson;
+        m_activeCamera = &m_firstPersonCamera;
+    }
     ImGui::EndGroup();
 
     ImGui::End();
@@ -580,7 +584,7 @@ void SceneManager::animateBlackQueen()
         light.updateShadowTransformation();
     }
 
-    // followign camera
+    // following camera
     // TODO: bugged rotation of scene
     if (m_cameraType == CameraType::Following) {
         glm::vec3 point = model * glm::vec4(m_followPoint, 1.0f);
@@ -589,6 +593,18 @@ void SceneManager::animateBlackQueen()
         glm::vec3 up = glm::normalize(glm::cross(right, front));
         m_followCamera.Front = front;
         m_followCamera.Up = up;
+    }
+
+    // first person camera
+    if (m_cameraType == CameraType::FirstPerson) {
+        glm::vec3 point = model * glm::vec4(m_followPoint, 1.0f);
+        glm::vec3 target = model * glm::vec4(m_followPoint + glm::vec3(tmp * glm::vec4(m_firstPersonCamera.InitialFront, 1.0f)), 1.0f);
+        glm::vec3 front = glm::normalize(target - point);
+        glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+        glm::vec3 up = glm::normalize(glm::cross(right, front));
+        m_firstPersonCamera.Front = front;
+        m_firstPersonCamera.Up = up;
+        m_firstPersonCamera.Position = point;
     }
 }
 

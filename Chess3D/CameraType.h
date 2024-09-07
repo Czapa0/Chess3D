@@ -2,6 +2,6 @@
 #define CAMERA_TYPE_H
 
 enum class CameraType {
-	FreeRoam, Static, Following
+	FreeRoam, Static, Following, FirstPerson
 };
 #endif
