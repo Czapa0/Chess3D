@@ -28,6 +28,7 @@ struct PointLight {
 };
 uniform int pointLightCount;
 uniform PointLight pointLights[MAX_POINT_LIGHT];
+uniform bool pointLightsActive;
 
 #define MAX_SPOT_LIGHT 5
 struct SpotLight {
@@ -44,6 +45,7 @@ struct SpotLight {
 };
 uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
+uniform bool spotLightsActive;
 
 struct DirLight {
     vec3 color;
@@ -55,6 +57,7 @@ struct DirLight {
 };
 uniform DirLight sun;
 uniform DirLight moon;
+uniform bool dayNightActive;
 
 uniform vec3 cameraPos;
 
@@ -94,33 +97,39 @@ void main() {
     // fragment part
     vec3 V = normalize(cameraPos - worldPos);
 
-    Light pl1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
-    pl1.position = pointLights[0].position;
-    PointLight1 = pl1;
+    if (pointLightsActive) {
+        Light pl1 = CalcPointLight(pointLights[0], V, worldNormal, worldPos);
+        pl1.position = pointLights[0].position;
+        PointLight1 = pl1;
 
-    Light pl2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
-    pl2.position = pointLights[1].position;
-    PointLight2 = pl2;
+        Light pl2 = CalcPointLight(pointLights[1], V, worldNormal, worldPos);
+        pl2.position = pointLights[1].position;
+        PointLight2 = pl2;
+    }
 
-    Light sl1 = CalcSpotLight(spotLights[0], V, worldNormal, worldPos);
-    sl1.position = spotLights[0].position;
-    sl1.fragPosLightSpace = spotLights[0].lightSpaceMatrix * vec4(FragPos, 1.0f);
-    SpotLight1 = sl1;
+    if (spotLightsActive) {
+        Light sl1 = CalcSpotLight(spotLights[0], V, worldNormal, worldPos);
+        sl1.position = spotLights[0].position;
+        sl1.fragPosLightSpace = spotLights[0].lightSpaceMatrix * vec4(FragPos, 1.0f);
+        SpotLight1 = sl1;
 
-    Light sl2 = CalcSpotLight(spotLights[1], V, worldNormal, worldPos);
-    sl2.position = spotLights[1].position;
-    sl2.fragPosLightSpace = spotLights[1].lightSpaceMatrix * vec4(FragPos, 1.0f);
-    SpotLight2 = sl2;
+        Light sl2 = CalcSpotLight(spotLights[1], V, worldNormal, worldPos);
+        sl2.position = spotLights[1].position;
+        sl2.fragPosLightSpace = spotLights[1].lightSpaceMatrix * vec4(FragPos, 1.0f);
+        SpotLight2 = sl2;
+    }
 
-    Light s = CalcDirLight(sun, V, worldNormal);
-    s.position = -sun.direction;
-    s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(FragPos, 1.0f);
-    Sun = s;
+    if (dayNightActive) {
+        Light s = CalcDirLight(sun, V, worldNormal);
+        s.position = -sun.direction;
+        s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(FragPos, 1.0f);
+        Sun = s;
 
-    Light m = CalcDirLight(moon, V, worldNormal);
-    m.position = -moon.direction;
-    m.fragPosLightSpace = moon.lightSpaceMatrix * vec4(FragPos, 1.0f);
-    Moon = m;
+        Light m = CalcDirLight(moon, V, worldNormal);
+        m.position = -moon.direction;
+        m.fragPosLightSpace = moon.lightSpaceMatrix * vec4(FragPos, 1.0f);
+        Moon = m;
+    }
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {

@@ -47,8 +47,11 @@ private:
 	Shader m_skyboxShader;
 
 	// === LIGHTS & MATERIAL ===
+	bool m_pointLightsActive = true;
 	std::vector<PointLight> m_pointLights;
+	bool m_spotLightsActive = true;
 	std::vector<SpotLight> m_spotLights;
+	bool m_dayNightActive = true;
 	DirectionalLight m_sun;
 	DirectionalLight m_moon;
 

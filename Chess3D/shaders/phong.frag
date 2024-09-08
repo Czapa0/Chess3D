@@ -20,6 +20,7 @@ struct PointLight {
 };
 uniform int pointLightCount;
 uniform PointLight pointLights[MAX_POINT_LIGHT];
+uniform bool pointLightsActive;
 
 #define MAX_SPOT_LIGHT 5
 struct SpotLight {
@@ -36,6 +37,7 @@ struct SpotLight {
 };
 uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
+uniform bool spotLightsActive;
 
 struct DirLight {
     vec3 color;
@@ -47,6 +49,7 @@ struct DirLight {
 };
 uniform DirLight sun;
 uniform DirLight moon;
+uniform bool dayNightActive;
 
 uniform vec3 cameraPos;
 
@@ -114,27 +117,33 @@ void main() {
     vec3 V = normalize(cameraPos - Pos);
 
     // point lights
-    for(int i = 0; i < pointLightCount; ++i) {
+    if (pointLightsActive) {
+        for(int i = 0; i < pointLightCount; ++i) {
         float shadow = CalcShadow(Pos, i, pointLights[i].position);
         finalColor += CalcPointLight(pointLights[i], V, Normal, Pos, shadow);
+        }
     }
 
     // spot lights
-    for(int i = 0; i < spotLightCount; ++i) {
-        vec4 fragPosLightSpace = spotLights[i].lightSpaceMatrix * vec4(Pos, 1.0);
-        float shadow = CalcShadowSL(fragPosLightSpace, i, spotLights[i].position);
-        finalColor += CalcSpotLight(spotLights[i], V, Normal, Pos, shadow);
+    if (spotLightsActive) {
+        for(int i = 0; i < spotLightCount; ++i) {
+            vec4 fragPosLightSpace = spotLights[i].lightSpaceMatrix * vec4(Pos, 1.0);
+            float shadow = CalcShadowSL(fragPosLightSpace, i, spotLights[i].position);
+            finalColor += CalcSpotLight(spotLights[i], V, Normal, Pos, shadow);
+        }
     }
 
-    // sun
-    vec4 fragPosLightSpace = sun.lightSpaceMatrix * vec4(Pos, 1.0);
-    float shadow = CalcShadowSun(fragPosLightSpace, -sun.direction);
-    finalColor += CalcDirLight(sun, V, Normal, shadow);
+    if (dayNightActive) {
+        // sun
+        vec4 fragPosLightSpace = sun.lightSpaceMatrix * vec4(Pos, 1.0);
+        float shadow = CalcShadowSun(fragPosLightSpace, -sun.direction);
+        finalColor += CalcDirLight(sun, V, Normal, shadow);
 
-    // moon
-    fragPosLightSpace = moon.lightSpaceMatrix * vec4(Pos, 1.0);
-    shadow = CalcShadowMoon(fragPosLightSpace, -moon.direction);
-    finalColor += CalcDirLight(moon, V, Normal, shadow);
+        // moon
+        fragPosLightSpace = moon.lightSpaceMatrix * vec4(Pos, 1.0);
+        shadow = CalcShadowMoon(fragPosLightSpace, -moon.direction);
+        finalColor += CalcDirLight(moon, V, Normal, shadow);
+    }
 
     // fog
     float fog = fogActive ? CalcFogFactor(Pos) : 1.0;

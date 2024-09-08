@@ -35,6 +35,10 @@ uniform bool fogActive;
 uniform float fogIntensity;
 uniform vec3 fogColor;
 
+uniform bool pointLightsActive;
+uniform bool spotLightsActive;
+uniform bool dayNightActive;
+
 out vec4 FragColor;
 
 vec3 sampleOffsetDirections[20] = vec3[]
@@ -79,27 +83,33 @@ void main()
     vec4 color;
 
     // point lights
-    // 1
-    shadow = ShadowCalculation(FragPos, 0, PointLight1.position);
-    color = CalcColor(PointLight1, shadow);
-    // 2
-    shadow = ShadowCalculation(FragPos, 1, PointLight2.position);
-    color += CalcColor(PointLight2, shadow);
+    if (pointLightsActive) {
+        // 1
+        shadow = ShadowCalculation(FragPos, 0, PointLight1.position);
+        color = CalcColor(PointLight1, shadow);
+        // 2
+        shadow = ShadowCalculation(FragPos, 1, PointLight2.position);
+        color += CalcColor(PointLight2, shadow);
+    }
 
     // spot lights
-    // 1.
-    shadow = CalcShadowSL(SpotLight1.fragPosLightSpace, 0, SpotLight1.position);
-    color += CalcColor(SpotLight1, shadow);
-    // 2.
-    shadow = CalcShadowSL(SpotLight2.fragPosLightSpace, 1, SpotLight2.position);
-    color += CalcColor(SpotLight2, shadow);
+    if (spotLightsActive) {
+        // 1.
+        shadow = CalcShadowSL(SpotLight1.fragPosLightSpace, 0, SpotLight1.position);
+        color += CalcColor(SpotLight1, shadow);
+        // 2.
+        shadow = CalcShadowSL(SpotLight2.fragPosLightSpace, 1, SpotLight2.position);
+        color += CalcColor(SpotLight2, shadow);
+    }
 
-    // sun
-    shadow = CalcShadowSun(Sun.fragPosLightSpace, -Sun.position);
-    color += CalcColor(Sun, shadow);
-    // moon
-    shadow = CalcShadowMoon(Moon.fragPosLightSpace, -Moon.position);
-    color += CalcColor(Moon, shadow);
+    if (dayNightActive) {
+        // sun
+        shadow = CalcShadowSun(Sun.fragPosLightSpace, -Sun.position);
+        color += CalcColor(Sun, shadow);
+        // moon
+        shadow = CalcShadowMoon(Moon.fragPosLightSpace, -Moon.position);
+        color += CalcColor(Moon, shadow);
+    }
 
     // fog
     float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;

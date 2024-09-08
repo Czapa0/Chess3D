@@ -345,6 +345,14 @@ void SceneManager::renderUI()
         m_activeCamera = &m_firstPersonCamera;
     }
     ImGui::EndGroup();
+    ImGui::Separator();
+
+    ImGui::BeginGroup();
+    ImGui::Text("Lights");
+    ImGui::Checkbox("Point Lights", &m_pointLightsActive);
+    ImGui::Checkbox("Spot Lights", &m_spotLightsActive);
+    ImGui::Checkbox("Day & Night", &m_dayNightActive);
+    ImGui::EndGroup();
 
     ImGui::End();
 }
@@ -579,6 +587,7 @@ void SceneManager::renderScene() {
     }
     shader->setFloat("farPlane", FAR_PLANE_PL);
     shader->setInt("pointLightCount", static_cast<int>(m_pointLights.size()));
+    shader->setBool("pointLightsActive", m_pointLightsActive);
 
     // spot lights
     for (int i = 0; i < m_spotLights.size(); i++) {
@@ -595,6 +604,7 @@ void SceneManager::renderScene() {
         shader->setMat4(light + ".lightSpaceMatrix", m_spotLights[i].shadowTransformation);
     }
     shader->setInt("spotLightCount", static_cast<int>(m_spotLights.size()));
+    shader->setBool("spotLightsActive", m_spotLightsActive);
 
     // sun
     shader->setVec3("sun.ambient", m_sun.ambient);
@@ -611,6 +621,8 @@ void SceneManager::renderScene() {
     shader->setVec3("moon.direction", m_moon.direction);
     shader->setMat4("moon.lightSpaceMatrix", m_moon.shadowTransformation);
     shader->setVec3("moon.color", m_moonColor);
+
+    shader->setBool("dayNightActive", m_dayNightActive);
 
     // TODO: moon and sun shadows need fixing
     glActiveTexture(GL_TEXTURE0);
