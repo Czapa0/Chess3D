@@ -8,6 +8,7 @@ SceneManager::SceneManager() :
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
+    m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(3.0f, -1.0f, 1.0f));
     m_activeCamera = &m_freeRoamCamera;
 }
 
@@ -489,6 +490,12 @@ void SceneManager::renderScene() {
         shader->setMat4(light + ".lightSpaceMatrix", m_spotLights[i].shadowTransformation);
     }
     shader->setInt("spotLightCount", static_cast<int>(m_spotLights.size()));
+
+    // sun
+    shader->setVec3("sun.ambient", m_sun.ambient);
+    shader->setVec3("sun.diffuse", m_sun.diffuse);
+    shader->setVec3("sun.specular", m_sun.specular);
+    shader->setVec3("sun.direction", m_sun.direction);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);

@@ -56,3 +56,16 @@ void SpotLight::updateShadowTransformation()
     glm::vec3 up = glm::cross(right, direction);
     shadowTransformation = shadowProjMat * glm::lookAt(position, position + direction, glm::normalize(up));
 }
+
+DirectionalLight::DirectionalLight(glm::vec3 ambient,
+    glm::vec3 diffuse,
+    glm::vec3 specular,
+    glm::vec3 direction) :
+    Light(ambient, diffuse, specular, 0), direction(direction), initialDirection(direction) {
+    shadowProjMat = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, NEAR_PLANE_PL, FAR_PLANE_PL);
+}
+
+void DirectionalLight::updateShadowTransformation()
+{
+    shadowTransformation = shadowProjMat * glm::lookAt(-direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+}

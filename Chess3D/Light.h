@@ -74,4 +74,20 @@ struct SpotLight : Light {
         float cone);
     void updateShadowTransformation();
 };
+
+struct DirectionalLight : Light {
+    glm::mat4 shadowProjMat;
+    glm::mat4 shadowTransformation;
+
+    glm::vec3 direction;
+    glm::vec3 initialDirection;
+
+    DirectionalLight() = default;
+    DirectionalLight(glm::vec3 ambient,
+        glm::vec3 diffuse,
+        glm::vec3 specular,
+        glm::vec3 direction);
+    void updateShadowTransformation();
+};
+
 #endif

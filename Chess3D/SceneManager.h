@@ -47,6 +47,7 @@ private:
 	// === LIGHTS & MATERIAL ===
 	std::vector<PointLight> m_pointLights;
 	std::vector<SpotLight> m_spotLights;
+	DirectionalLight m_sun;
 
 	// === DEPTH MAPPING ===
 	// point lights
