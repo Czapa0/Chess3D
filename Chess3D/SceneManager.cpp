@@ -496,6 +496,7 @@ void SceneManager::renderScene() {
     shader->setVec3("sun.diffuse", m_sun.diffuse);
     shader->setVec3("sun.specular", m_sun.specular);
     shader->setVec3("sun.direction", m_sun.direction);
+    shader->setMat4("sun.lightSpaceMatrix", m_sun.shadowTransformation);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);

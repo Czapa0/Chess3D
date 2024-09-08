@@ -12,6 +12,7 @@ in Light PointLight1;
 in Light PointLight2;
 in Light SpotLight1;
 in Light SpotLight2;
+in Light Sun;
 in vec2 TexCoords;
 in vec3 FragPos;
 in vec3 FragNormal;
@@ -98,6 +99,13 @@ void main()
         (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * SpotLight2.diffuse + 
         texture(texture_ambient0, TexCoords) * SpotLight2.ambient + 
         (1 - shadow) * texture(texture_specular0, TexCoords) *  SpotLight2.specular;
+
+    // sun
+    shadow = 0.0f;
+    color += 
+        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * Sun.diffuse + 
+        texture(texture_ambient0, TexCoords) * Sun.ambient + 
+        (1 - shadow) * texture(texture_specular0, TexCoords) *  Sun.specular;
 
     // fog
     float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;

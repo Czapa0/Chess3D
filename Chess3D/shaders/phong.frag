@@ -42,6 +42,7 @@ struct DirLight {
     vec3 diffuse;
     vec3 specular;
     vec3 direction;
+    mat4 lightSpaceMatrix;
 };
 uniform DirLight sun;
 
