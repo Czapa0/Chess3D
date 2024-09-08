@@ -54,6 +54,7 @@ struct DirLight {
     mat4 lightSpaceMatrix;
 };
 uniform DirLight sun;
+uniform DirLight moon;
 
 uniform vec3 cameraPos;
 
@@ -72,6 +73,7 @@ out Light PointLight2;
 out Light SpotLight1;
 out Light SpotLight2;
 out Light Sun;
+out Light Moon;
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 FragNormal;
@@ -114,6 +116,11 @@ void main() {
     s.position = -sun.direction;
     s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(FragPos, 1.0f);
     Sun = s;
+
+    Light m = CalcDirLight(moon, V, worldNormal);
+    m.position = -moon.direction;
+    m.fragPosLightSpace = moon.lightSpaceMatrix * vec4(FragPos, 1.0f);
+    Moon = m;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
