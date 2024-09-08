@@ -111,7 +111,7 @@ void main() {
 
     Light s = CalcDirLight(sun, V, worldNormal);
     s.position = -sun.direction;
-    s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(worldPos, 1.0f);
+    s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(FragPos, 1.0f);
     Sun = s;
 }
 
