@@ -68,5 +68,5 @@ DirectionalLight::DirectionalLight(glm::vec3 ambient,
 
 void DirectionalLight::updateShadowTransformation()
 {
-    shadowTransformation = shadowProjMat * glm::lookAt(-direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    shadowTransformation = shadowProjMat * glm::lookAt(-glm::normalize(direction), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }
