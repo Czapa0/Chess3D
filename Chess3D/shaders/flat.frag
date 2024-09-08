@@ -12,6 +12,7 @@ in Light PointLight1;
 in Light PointLight2;
 in Light SpotLight1;
 in Light SpotLight2;
+in Light Sun;
 in vec2 TexCoords;
 in vec3 FragPos;
 in vec3 FragNormal;
@@ -62,6 +63,7 @@ vec2 poissonDisk[] = vec2[](
    vec2( 0.14383161, -0.14100790 ) 
 );
 
+vec4 CalcColor(Light light, float shadow);
 float ShadowCalculation(vec3 fragPos, int light, vec3 position);
 float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position);
 float CalcFogFactor(vec3 pos);
@@ -74,30 +76,22 @@ void main()
     // point lights
     // 1
     shadow = ShadowCalculation(FragPos, 0, PointLight1.position);
-    color = 
-        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * PointLight1.diffuse + 
-        texture(texture_ambient0, TexCoords) * PointLight1.ambient + 
-        (1 - shadow) * texture(texture_specular0, TexCoords) * PointLight1.specular;
+    color = CalcColor(PointLight1, shadow);
     // 2
     shadow = ShadowCalculation(FragPos, 1, PointLight2.position);
-    color += 
-        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * PointLight2.diffuse + 
-        texture(texture_ambient0, TexCoords) * PointLight2.ambient + 
-        (1 - shadow) * texture(texture_specular0, TexCoords) *  PointLight2.specular;
+    color += CalcColor(PointLight2, shadow);
 
     // spot lights
     // 1.
     shadow = CalcShadowSL(SpotLight1.fragPosLightSpace, 0, SpotLight1.position);
-    color += 
-        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * SpotLight1.diffuse + 
-        texture(texture_ambient0, TexCoords) * SpotLight1.ambient + 
-        (1 - shadow) * texture(texture_specular0, TexCoords) *  SpotLight1.specular;
+    color += CalcColor(SpotLight1, shadow);
     // 2.
     shadow = CalcShadowSL(SpotLight2.fragPosLightSpace, 1, SpotLight2.position);
-    color += 
-        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * SpotLight2.diffuse + 
-        texture(texture_ambient0, TexCoords) * SpotLight2.ambient + 
-        (1 - shadow) * texture(texture_specular0, TexCoords) *  SpotLight2.specular;
+    color += CalcColor(SpotLight2, shadow);
+
+    // sun
+    shadow = 0.0f;
+    color += CalcColor(Sun, shadow);
 
     // fog
     float fog = fogActive ? CalcFogFactor(FragPos) : 1.0;
@@ -105,6 +99,14 @@ void main()
 
     color = clamp(color, 0.0, 1.0);
     FragColor = color;
+}
+
+vec4 CalcColor(Light light, float shadow)
+{
+    return 
+        (1.0 - shadow) * texture(texture_diffuse0, TexCoords) * light.diffuse + 
+        texture(texture_ambient0, TexCoords) * light.ambient + 
+        (1 - shadow) * texture(texture_specular0, TexCoords) *  light.specular;
 }
 
 float ShadowCalculation(vec3 fragPos, int light, vec3 position)

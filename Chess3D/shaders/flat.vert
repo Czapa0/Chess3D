@@ -45,6 +45,15 @@ struct SpotLight {
 uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
 
+struct DirLight {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 direction;
+    mat4 lightSpaceMatrix;
+};
+uniform DirLight sun;
+
 uniform vec3 cameraPos;
 
 uniform mat4 modelMatrix;
@@ -61,12 +70,14 @@ out Light PointLight1;
 out Light PointLight2;
 out Light SpotLight1;
 out Light SpotLight2;
+out Light Sun;
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 FragNormal;
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P);
 Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P);
+Light CalcDirLight(DirLight light, vec3 V, vec3 N);
 
 void main() {
     // vertex part
@@ -97,6 +108,11 @@ void main() {
     sl2.position = spotLights[1].position;
     sl2.fragPosLightSpace = spotLights[1].lightSpaceMatrix * vec4(FragPos, 1.0f);
     SpotLight2 = sl2;
+
+    Light s = CalcDirLight(sun, V, worldNormal);
+    s.position = -sun.direction;
+    s.fragPosLightSpace = sun.lightSpaceMatrix * vec4(worldPos, 1.0f);
+    Sun = s;
 }
 
 Light CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 P) {
@@ -135,5 +151,18 @@ Light CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P) {
     res.ambient = vec4(light.ambient * material.ambient * attenuation * cosDLc, 1.0);
     res.diffuse = vec4(cosNL * light.diffuse * material.diffuse * attenuation * cosDLc, 1.0);
     res.specular = vec4(cosVRn * light.specular * material.specular * attenuation * cosDLc, 1.0);
+    return res;
+}
+
+Light CalcDirLight(DirLight light, vec3 V, vec3 N) {
+    vec3 L = -normalize(light.direction);
+    float cosNL = max(dot(N, L), 0.0);
+    vec3 R = 2 * dot(N, L) * N - L;
+    float cosVRn = cosNL > 0.0 ? pow(max(dot(V, R), 0.0), material.shininess) : 0.0;
+
+    Light res;
+    res.ambient = vec4(light.ambient * material.ambient, 1.0);
+    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse, 1.0);
+    res.specular = vec4(cosVRn * light.specular * material.specular, 1.0);
     return res;
 }
