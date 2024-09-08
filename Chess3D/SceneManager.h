@@ -3,6 +3,7 @@
 
 constexpr float ANIMATION_SPEED = 4.0;
 constexpr float ANIMATION_ANGLE = 30.0;
+constexpr float SUN_ROTATION = 5.0;
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -57,6 +58,9 @@ private:
 	// spot lights
 	unsigned int m_depthArrayFBO;
 	unsigned int m_depthArray;
+	// sun
+	unsigned int m_depthSunFBO;
+	unsigned int m_depthSun;
 
 	// === FOG ===
 	bool m_fogActive = false;
@@ -131,8 +135,10 @@ private:
 	// shadow mapping
 	void initPointLightShadowMapping();
 	void initSpotLightShadowMapping();
+	void initSunShadowMapping();
 	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
 	void renderSpotlightDepthMap(const SpotLight& light);
+	void renderSunDepthMap(const DirectionalLight& light);
 	// cmaera
 	void moveCamera();
 	// scene rendering

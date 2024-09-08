@@ -40,6 +40,7 @@ int SceneManager::init() {
 
     initPointLightShadowMapping();
     initSpotLightShadowMapping();
+    initSunShadowMapping();
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -213,6 +214,39 @@ void SceneManager::initSpotLightShadowMapping()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void SceneManager::initSunShadowMapping()
+{
+    // init depth map array FBO
+    glGenFramebuffers(1, &m_depthSunFBO);
+
+    // init depth map for sun
+    glGenTextures(1, &m_depthSun);
+
+    // allocate storage
+    glBindTexture(GL_TEXTURE_2D, m_depthSun);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+    // parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    // bind depth map to FBO as depth attatchment
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthSunFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthSun, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+
+    auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void SceneManager::moveCamera() {
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
         m_freeRoamCamera.ProcessKeyboard(FORWARD, m_deltaTime);
@@ -358,6 +392,7 @@ int SceneManager::run() {
         for (const SpotLight& light : m_spotLights) {
             renderSpotlightDepthMap(light);
         }
+        renderSunDepthMap(m_sun);
         glCullFace(GL_BACK);
 
         renderScene();
@@ -419,6 +454,21 @@ void SceneManager::renderSpotlightDepthMap(const SpotLight& light)
     renderModels(m_depthShader_SL, RenderType::Everything);
 
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneManager::renderSunDepthMap(const DirectionalLight& light)
+{
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthSunFBO);
+
+    m_depthShader_SL.use();
+    m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformation);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    renderModels(m_depthShader_SL, RenderType::Everything);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -505,6 +555,9 @@ void SceneManager::renderScene() {
     glActiveTexture(GL_TEXTURE0 + 1);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMapSL"), 1);
     glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthArray);
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glUniform1i(glGetUniformLocation(shader->ID, "depthMapSun"), 2);
+    glBindTexture(GL_TEXTURE_2D, m_depthSun);
 
     // draw scene
     renderModels(*shader);
@@ -619,12 +672,13 @@ void SceneManager::animateBlackQueen()
 
 void SceneManager::animateSun()
 {
-    m_sunRotation += ANIMATION_ANGLE * m_deltaTime;
+    m_sunRotation += SUN_ROTATION * m_deltaTime;
     while (m_sunRotation > 360.0f) {
         m_sunRotation -= 360.0f;
     }
     glm::mat4 roatation = glm::rotate(glm::mat4(1.0f), glm::radians(m_sunRotation), glm::vec3(0.0f, 0.0f, 1.0f));
     m_sun.direction = roatation * glm::vec4(m_sun.initialDirection, 1.0f);
+    m_sun.updateShadowTransformation();
 }
 
 int SceneManager::terminate() {

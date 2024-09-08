@@ -63,6 +63,7 @@ DirectionalLight::DirectionalLight(glm::vec3 ambient,
     glm::vec3 direction) :
     Light(ambient, diffuse, specular, 0), direction(direction), initialDirection(direction) {
     shadowProjMat = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, NEAR_PLANE_PL, FAR_PLANE_PL);
+    updateShadowTransformation();
 }
 
 void DirectionalLight::updateShadowTransformation()

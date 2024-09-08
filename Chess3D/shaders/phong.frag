@@ -56,6 +56,7 @@ uniform float fogIntensity;
 
 uniform samplerCubeArray depthMap;
 uniform sampler2DArray depthMapSL;
+uniform sampler2D depthMapSun;
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_ambient0;
 uniform sampler2D texture_specular0;
@@ -100,6 +101,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 V, vec3 N, vec3 P, float shadow);
 vec3 CalcDirLight(DirLight light, vec3 V, vec3 N, float shadow);
 float CalcShadow(vec3 fragPos, int light, vec3 position);
 float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position);
+float CalcShadowSun(vec4 fragPosLightSpace, vec3 position);
 float CalcFogFactor(vec3 pos);
 
 void main() {
@@ -121,7 +123,8 @@ void main() {
     }
 
     // sun
-    float shadow = 0.0f;
+    vec4 fragPosLightSpace = sun.lightSpaceMatrix * vec4(Pos, 1.0);
+    float shadow = CalcShadowSun(fragPosLightSpace, -sun.direction);
     finalColor += CalcDirLight(sun, V, Normal, shadow);
 
     // fog
@@ -201,7 +204,8 @@ float CalcShadow(vec3 fragPos, int light, vec3 position)
     return shadow;
 }
 
-float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position){
+float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position)
+{
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
@@ -219,6 +223,36 @@ float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position){
     float spreadInv = 1.0 / 700.0;
     for (int i = 0; i < diskSize; ++i) {
        float pcfDepth = texture(depthMapSL, vec3(projCoords.xy + poissonDisk[i] * spreadInv, light)).r; 
+       shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+    }
+    shadow /= diskSize;
+    
+    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(projCoords.z > 1.0)
+        shadow = 0.0;
+        
+    return shadow;
+}
+
+float CalcShadowSun(vec4 fragPosLightSpace, vec3 position)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthMapSun, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // calculate bias (based on depth map resolution and slope)
+    vec3 lightDir = normalize(position - Pos);
+    float bias = max(0.05 * (1.0 - dot(Normal, lightDir)), 0.005);
+    bias = 0.0f;
+    // PCF
+    float shadow = 0.0;
+    float spreadInv = 1.0 / 700.0;
+    for (int i = 0; i < diskSize; ++i) {
+       float pcfDepth = texture(depthMapSun, projCoords.xy + poissonDisk[i] * spreadInv).r; 
        shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
     }
     shadow /= diskSize;
