@@ -8,7 +8,7 @@ SceneManager::SceneManager() :
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
-    m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(3.0f, -1.0f, 1.0f));
+    m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(0.0f, -1.0f, 0.0f));
     m_activeCamera = &m_freeRoamCamera;
 }
 
@@ -337,6 +337,7 @@ int SceneManager::run() {
         }
         
         animateBlackQueen();
+        animateSun();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -555,10 +556,10 @@ void SceneManager::animateBlackQueen()
     // TODO: fix for debug
     // translation borders
     if (m_blackQueen.modelMatrix[3][0] > 1.4f) {
-        m_speedFactor = -1.0f;
+        m_queenSpeedFactor = -1.0f;
     }
     else if (m_blackQueen.modelMatrix[3][0] < -0.8f) {
-        m_speedFactor = 1.0f;
+        m_queenSpeedFactor = 1.0f;
     }
 
     // recalculate mode matrix
@@ -569,15 +570,15 @@ void SceneManager::animateBlackQueen()
     model = glm::translate(model, glm::vec3(-8.0f, -7.5f, 5.1f));
 
     // update animation variables
-    m_translation += ANIMATION_SPEED * m_speedFactor * m_deltaTime;
-    m_rotation += ANIMATION_ANGLE * m_deltaTime;
-    while (m_rotation > 360.0f) {
-        m_rotation -= 360.0f;
+    m_queenTranslation += ANIMATION_SPEED * m_queenSpeedFactor * m_deltaTime;
+    m_queenRotation += ANIMATION_ANGLE * m_deltaTime;
+    while (m_queenRotation > 360.0f) {
+        m_queenRotation -= 360.0f;
     }
 
     // rotation and translation
-    model = glm::translate(model, glm::vec3(m_translation, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(m_queenTranslation, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(m_queenRotation), glm::vec3(0.0f, 0.0f, 1.0f));
     m_blackQueen.modelMatrix = model;
 
     // spotlight
@@ -614,6 +615,16 @@ void SceneManager::animateBlackQueen()
         m_firstPersonCamera.Up = up;
         m_firstPersonCamera.Position = point;
     }
+}
+
+void SceneManager::animateSun()
+{
+    m_sunRotation += ANIMATION_ANGLE * m_deltaTime;
+    while (m_sunRotation > 360.0f) {
+        m_sunRotation -= 360.0f;
+    }
+    glm::mat4 roatation = glm::rotate(glm::mat4(1.0f), glm::radians(m_sunRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_sun.direction = roatation * glm::vec4(m_sun.initialDirection, 1.0f);
 }
 
 int SceneManager::terminate() {

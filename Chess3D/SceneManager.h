@@ -74,9 +74,12 @@ private:
 	int m_height;
 
 	// === ANIMATION ===
-	float m_speedFactor = 1.0;
-	float m_translation = 0.0;
-	float m_rotation = 0.0;
+	// queen
+	float m_queenSpeedFactor = 1.0;
+	float m_queenTranslation = 0.0;
+	float m_queenRotation = 0.0;
+	// sun
+	float m_sunRotation = 0.0;
 
 	// === CAMERA ===
 	CameraType m_cameraType = CameraType::FreeRoam;
@@ -122,18 +125,25 @@ private:
 	Skybox m_skybox;
 
 	// === METHODS ===
+	// init
 	int arrange();
 	int loadModels();
+	// shadow mapping
 	void initPointLightShadowMapping();
 	void initSpotLightShadowMapping();
-	void moveCamera();
-	void renderUI();
 	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
 	void renderSpotlightDepthMap(const SpotLight& light);
+	// cmaera
+	void moveCamera();
+	// scene rendering
+	void renderUI();
 	void renderScene();
 	void renderModels(Shader& shader, RenderType renderMode = RenderType::Everything);
 	void renderSkybox();
+	// animation
 	void animateBlackQueen();
+	void animateSun();
+	// clean
 	int terminate();
 };
 
