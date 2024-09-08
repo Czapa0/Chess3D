@@ -612,6 +612,7 @@ void SceneManager::renderScene() {
     shader->setMat4("moon.lightSpaceMatrix", m_moon.shadowTransformation);
     shader->setVec3("moon.color", m_moonColor);
 
+    // TODO: moon and sun shadows need fixing
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
