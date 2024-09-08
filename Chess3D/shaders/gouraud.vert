@@ -46,6 +46,7 @@ uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
 
 struct DirLight {
+    vec3 color;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -159,8 +160,8 @@ Light CalcDirLight(DirLight light, vec3 V, vec3 N) {
     float cosVRn = cosNL > 0.0 ? pow(max(dot(V, R), 0.0), material.shininess) : 0.0;
 
     Light res;
-    res.ambient = vec4(light.ambient * material.ambient, 1.0);
-    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse, 1.0);
-    res.specular = vec4(cosVRn * light.specular * material.specular, 1.0);
+    res.ambient = vec4(light.ambient * material.ambient * light.color, 1.0);
+    res.diffuse = vec4(cosNL * light.diffuse * material.diffuse * light.color, 1.0);
+    res.specular = vec4(cosVRn * light.specular * material.specular * light.color, 1.0);
     return res;
 }

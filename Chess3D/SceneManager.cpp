@@ -4,11 +4,11 @@ SceneManager::SceneManager() :
     m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), 
     m_staticCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_followPoint(0.0f, 0.0f, 0.0f),
     m_followCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.045, 0.0075);
-    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.045, 0.0075);
-    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
-    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
-    m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(0.6f), glm::vec3(0.0f, -1.0f, 0.0f));
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.22, 0.2);
+    m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.22, 0.2);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
+    m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
+    m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(8.8f), glm::vec3(0.0f, -1.0f, 0.0f));
     m_activeCamera = &m_freeRoamCamera;
 }
 
@@ -548,6 +548,7 @@ void SceneManager::renderScene() {
     shader->setVec3("sun.specular", m_sun.specular);
     shader->setVec3("sun.direction", m_sun.direction);
     shader->setMat4("sun.lightSpaceMatrix", m_sun.shadowTransformation);
+    shader->setVec3("sun.color", m_sunColor);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
@@ -678,6 +679,8 @@ void SceneManager::animateSun()
     }
     glm::mat4 roatation = glm::rotate(glm::mat4(1.0f), glm::radians(m_sunRotation), glm::vec3(0.0f, 0.0f, 1.0f));
     m_sun.direction = roatation * glm::vec4(m_sun.initialDirection, 1.0f);
+    float cosNL = glm::dot(glm::vec3(0.0f, 1.0f, 0.0f), glm::normalize(-m_sun.direction));
+    m_sunColor = glm::vec3(1.0f, glm::mix(0.24f, 1.0f, cosNL), glm::mix(0.24f, 0.86f, cosNL));
     m_sun.updateShadowTransformation();
 }
 

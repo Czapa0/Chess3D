@@ -84,6 +84,7 @@ private:
 	float m_queenRotation = 0.0;
 	// sun
 	float m_sunRotation = 0.0;
+	glm::vec3 m_sunColor;
 
 	// === CAMERA ===
 	CameraType m_cameraType = CameraType::FreeRoam;

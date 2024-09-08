@@ -38,6 +38,7 @@ uniform int spotLightCount;
 uniform SpotLight spotLights[MAX_SPOT_LIGHT];
 
 struct DirLight {
+    vec3 color;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -180,7 +181,7 @@ vec3 CalcDirLight(DirLight light, vec3 V, vec3 N, float shadow) {
     vec3 ambient = light.ambient * material.ambient * vec3(texture(texture_ambient0, TexCoords));
     vec3 diffuse = cosNL * light.diffuse * material.diffuse * vec3(texture(texture_diffuse0, TexCoords));
     vec3 specular = cosVRn * light.specular * material.specular * vec3(texture(texture_specular0, TexCoords));
-    return ambient + (1.0f - shadow) * (diffuse + specular);
+    return light.color * (ambient + (1.0f - shadow) * (diffuse + specular));
 }
 
 float CalcShadow(vec3 fragPos, int light, vec3 position)
