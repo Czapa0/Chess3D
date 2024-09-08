@@ -4,6 +4,7 @@
 constexpr float ANIMATION_SPEED = 4.0;
 constexpr float ANIMATION_ANGLE = 30.0;
 constexpr float SUN_ROTATION = 5.0;
+constexpr float MOON_ROTATION = 5.0;
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -49,6 +50,7 @@ private:
 	std::vector<PointLight> m_pointLights;
 	std::vector<SpotLight> m_spotLights;
 	DirectionalLight m_sun;
+	DirectionalLight m_moon;
 
 	// === DEPTH MAPPING ===
 	// point lights
@@ -61,6 +63,9 @@ private:
 	// sun
 	unsigned int m_depthSunFBO;
 	unsigned int m_depthSun;
+	// moon
+	unsigned int m_depthMoonFBO;
+	unsigned int m_depthMoon;
 
 	// === FOG ===
 	bool m_fogActive = false;
@@ -85,6 +90,9 @@ private:
 	// sun
 	float m_sunRotation = 0.0;
 	glm::vec3 m_sunColor;
+	// moon
+	float m_moonRotation = 0.0;
+	glm::vec3 m_moonColor = glm::vec3(0.21f, 0.53f, 0.63f);
 
 	// === CAMERA ===
 	CameraType m_cameraType = CameraType::FreeRoam;
@@ -137,9 +145,11 @@ private:
 	void initPointLightShadowMapping();
 	void initSpotLightShadowMapping();
 	void initSunShadowMapping();
+	void initMoonShadowMapping();
 	void renderPointLightDepthMap(const PointLight& light, RenderType renderMode);
 	void renderSpotlightDepthMap(const SpotLight& light);
 	void renderSunDepthMap(const DirectionalLight& light);
+	void renderMoonDepthMap(const DirectionalLight& light);
 	// cmaera
 	void moveCamera();
 	// scene rendering
@@ -150,6 +160,7 @@ private:
 	// animation
 	void animateBlackQueen();
 	void animateSun();
+	void animateMoon();
 	// clean
 	int terminate();
 };

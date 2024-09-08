@@ -9,6 +9,7 @@ SceneManager::SceneManager() :
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::normalize(glm::vec3(0.0f, -2.0f, -1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
     m_sun = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(8.8f), glm::vec3(0.0f, -1.0f, 0.0f));
+    m_moon = DirectionalLight(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(8.8f), glm::vec3(0.0f, 1.0f, 0.0f));
     m_activeCamera = &m_freeRoamCamera;
 }
 
@@ -41,6 +42,7 @@ int SceneManager::init() {
     initPointLightShadowMapping();
     initSpotLightShadowMapping();
     initSunShadowMapping();
+    initMoonShadowMapping();
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -247,6 +249,40 @@ void SceneManager::initSunShadowMapping()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void SceneManager::initMoonShadowMapping()
+{
+    // init depth map array FBO
+    glGenFramebuffers(1, &m_depthMoonFBO);
+
+    // init depth map for moon
+    glGenTextures(1, &m_depthMoon);
+
+    // allocate storage
+    glBindTexture(GL_TEXTURE_2D, m_depthMoon);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+    // parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    // bind depth map to FBO as depth attatchment
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMoonFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthMoon, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+
+    auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 void SceneManager::moveCamera() {
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
         m_freeRoamCamera.ProcessKeyboard(FORWARD, m_deltaTime);
@@ -372,6 +408,7 @@ int SceneManager::run() {
         
         animateBlackQueen();
         animateSun();
+        animateMoon();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -393,6 +430,7 @@ int SceneManager::run() {
             renderSpotlightDepthMap(light);
         }
         renderSunDepthMap(m_sun);
+        renderMoonDepthMap(m_moon);
         glCullFace(GL_BACK);
 
         renderScene();
@@ -472,6 +510,22 @@ void SceneManager::renderSunDepthMap(const DirectionalLight& light)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void SceneManager::renderMoonDepthMap(const DirectionalLight& light)
+{
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthMoonFBO);
+
+    m_depthShader_SL.use();
+    m_depthShader_SL.setMat4("lightSpaceMatrix", light.shadowTransformation);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    renderModels(m_depthShader_SL, RenderType::Everything);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 void SceneManager::renderScene() {
     glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -550,6 +604,14 @@ void SceneManager::renderScene() {
     shader->setMat4("sun.lightSpaceMatrix", m_sun.shadowTransformation);
     shader->setVec3("sun.color", m_sunColor);
 
+    // moon
+    shader->setVec3("moon.ambient", m_moon.ambient);
+    shader->setVec3("moon.diffuse", m_moon.diffuse);
+    shader->setVec3("moon.specular", m_moon.specular);
+    shader->setVec3("moon.direction", m_moon.direction);
+    shader->setMat4("moon.lightSpaceMatrix", m_moon.shadowTransformation);
+    shader->setVec3("moon.color", m_moonColor);
+
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
@@ -559,6 +621,9 @@ void SceneManager::renderScene() {
     glActiveTexture(GL_TEXTURE0 + 2);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMapSun"), 2);
     glBindTexture(GL_TEXTURE_2D, m_depthSun);
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glUniform1i(glGetUniformLocation(shader->ID, "depthMapMoon"), 3);
+    glBindTexture(GL_TEXTURE_2D, m_depthMoon);
 
     // draw scene
     renderModels(*shader);
@@ -682,6 +747,17 @@ void SceneManager::animateSun()
     float cosNL = glm::dot(glm::vec3(0.0f, 1.0f, 0.0f), glm::normalize(-m_sun.direction));
     m_sunColor = glm::vec3(1.0f, glm::mix(0.24f, 1.0f, cosNL), glm::mix(0.24f, 0.86f, cosNL));
     m_sun.updateShadowTransformation();
+}
+
+void SceneManager::animateMoon()
+{
+    m_moonRotation += MOON_ROTATION * m_deltaTime;
+    while (m_moonRotation > 360.0f) {
+        m_moonRotation -= 360.0f;
+    }
+    glm::mat4 roatation = glm::rotate(glm::mat4(1.0f), glm::radians(m_moonRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_moon.direction = roatation * glm::vec4(m_moon.initialDirection, 1.0f);
+    m_moon.updateShadowTransformation();
 }
 
 int SceneManager::terminate() {
