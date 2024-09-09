@@ -61,7 +61,6 @@ int SceneManager::init() {
 }
 
 int SceneManager::loadModels() {
-    // TODO: maybe add some error checking in model class
     glm::mat4 model(1.0);
     model = glm::scale(model, glm::vec3(0.1));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -482,7 +481,7 @@ void SceneManager::renderPointLightDepthMap(const PointLight& light, RenderType 
         renderModels(m_depthShader, renderMode);
     }
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -499,7 +498,7 @@ void SceneManager::renderSpotlightDepthMap(const SpotLight& light)
     glClear(GL_DEPTH_BUFFER_BIT);
     renderModels(m_depthShader_SL, RenderType::Everything);
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0); // TODO: maybe better handling needed
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -574,7 +573,7 @@ void SceneManager::renderScene() {
     shader->setVec3("material.specular", m_chessBoard.material.specular);
     shader->setFloat("material.shininess", m_chessBoard.material.shininess);
 
-    // point lights TODO: better management
+    // point lights
     for (int i = 0; i < m_pointLights.size(); i++) {
         std::string light = "pointLights[" + std::to_string(i) + "]";
         shader->setVec3(light + ".ambient", m_pointLights[i].ambient);
@@ -624,7 +623,6 @@ void SceneManager::renderScene() {
 
     shader->setBool("dayNightActive", m_dayNightActive);
 
-    // TODO: moon and sun shadows need fixing
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(shader->ID, "depthMap"), 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_depthCubeMapArray);
@@ -684,8 +682,6 @@ void SceneManager::renderSkybox()
 
 void SceneManager::animateBlackQueen()
 {
-    // TODO: better handling of constatnts
-    // TODO: fix for debug
     // translation borders
     if (m_blackQueen.modelMatrix[3][0] > 1.4f) {
         m_queenSpeedFactor = -1.0f;
@@ -695,7 +691,6 @@ void SceneManager::animateBlackQueen()
     }
 
     // recalculate mode matrix
-    // TODO: probably shouls be stored in model
     glm::mat4 model(1.0);
     model = glm::scale(model, glm::vec3(0.1));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));

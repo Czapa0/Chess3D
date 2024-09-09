@@ -159,13 +159,12 @@ float CalcShadowSL(vec4 fragPosLightSpace, int light, vec3 position){
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
     vec3 lightDir = normalize(position - FragPos);
-    float bias = 0.0f; // TODO: probably to be removed
     // PCF
     float shadow = 0.0;
     float spreadInv = 1.0 / 700.0;
     for (int i = 0; i < diskSize; ++i) {
        float pcfDepth = texture(depthMapSL, vec3(projCoords.xy + poissonDisk[i] * spreadInv, light)).r; 
-       shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+       shadow += currentDepth > pcfDepth  ? 1.0 : 0.0;
     }
     shadow /= diskSize;
     
