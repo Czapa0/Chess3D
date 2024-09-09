@@ -7,8 +7,7 @@ constexpr auto SENSITIVITY = 0.1f;
 constexpr auto ZOOM = 45.0f;
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-InitialFront(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed_Slow(SPEED_SLOW), MovementSpeed_Fast(SPEED_FAST), 
-MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
+MovementSpeed_Slow(SPEED_SLOW), MovementSpeed_Fast(SPEED_FAST), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
     Position = position;
     WorldUp = up;
     Yaw = yaw;
@@ -16,16 +15,18 @@ MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
     MovementSpeed = MovementSpeed_Slow;
     m_originalWorldUp = up;
     updateCameraVectors();
+    InitialFront = Front;
 }
 
 Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) :
-    Front(glm::vec3(0.0f, 0.0f, -1.0f)), InitialFront(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed_Slow(SPEED_SLOW), 
+    Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed_Slow(SPEED_SLOW), 
     MovementSpeed_Fast(SPEED_FAST), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
     Position = glm::vec3(posX, posY, posZ);
     WorldUp = glm::vec3(upX, upY, upZ);
     Yaw = yaw;
     Pitch = pitch;
     updateCameraVectors();
+    InitialFront = Front;
 }
 
 glm::mat4 Camera::GetViewMatrix() const {

@@ -1,9 +1,10 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager() : 
-    m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), 
+    m_freeRoamCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_firstPersonPoint(0.0f, -1.0f, 10.0f),
     m_staticCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_followPoint(0.0f, 0.0f, 0.0f),
-    m_followCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D") {
+    m_followCamera(glm::vec3(0.0f, 3.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -45.0f), m_title("Chess3D"),
+    m_firstPersonCamera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, -15.0f) {
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::vec3(1.35f, 1.0f, -1.35f), 1.0, 0.22, 0.2);
     m_pointLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::vec3(-1.9f, 1.0f, 1.35f), 1.0, 0.22, 0.2);
     m_spotLights.emplace_back(glm::vec3(0.1f), glm::vec3(0.5f), glm::vec3(0.5f), glm::normalize(glm::vec3(0.0f, -2.0f, 1.0f)), glm::vec3(-0.8f, 1.5f, 0.9f), 1.0, 0.045, 0.0075, 50.0);
@@ -721,7 +722,6 @@ void SceneManager::animateBlackQueen()
     }
 
     // following camera
-    // TODO: bugged rotation of scene
     if (m_cameraType == CameraType::Following) {
         glm::vec3 point = model * glm::vec4(m_followPoint, 1.0f);
         glm::vec3 front = glm::normalize(point - m_followCamera.Position);
@@ -733,8 +733,8 @@ void SceneManager::animateBlackQueen()
 
     // first person camera
     if (m_cameraType == CameraType::FirstPerson) {
-        glm::vec3 point = model * glm::vec4(m_followPoint, 1.0f);
-        glm::vec3 target = model * glm::vec4(m_followPoint + glm::vec3(tmp * glm::vec4(m_firstPersonCamera.InitialFront, 1.0f)), 1.0f);
+        glm::vec3 point = model * glm::vec4(m_firstPersonPoint, 1.0f);
+        glm::vec3 target = model * glm::vec4(m_firstPersonPoint + glm::vec3(tmp * glm::vec4(m_firstPersonCamera.InitialFront, 1.0f)), 1.0f);
         glm::vec3 front = glm::normalize(target - point);
         glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
         glm::vec3 up = glm::normalize(glm::cross(right, front));

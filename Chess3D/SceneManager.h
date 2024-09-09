@@ -106,6 +106,7 @@ private:
 	Camera m_firstPersonCamera;
 
 	glm::vec3 m_followPoint;
+	glm::vec3 m_firstPersonPoint;
 
 	float m_lastX = m_width / 2.0f;
 	float m_lastY = m_height / 2.0f;
