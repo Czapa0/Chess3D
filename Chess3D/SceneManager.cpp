@@ -102,7 +102,7 @@ int SceneManager::loadModels() {
 
     // === BLACK QUEEN ===
     m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", RenderType::Dynamic, model);
-    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-8.0f, -7.5f, 5.1f));
+    m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-8.0f, -7.5f, 0.0f));
 
     // == BLACK ROOKS ===
     Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", RenderType::Static, model);
@@ -699,7 +699,7 @@ void SceneManager::animateBlackQueen()
     glm::mat4 model(1.0);
     model = glm::scale(model, glm::vec3(0.1));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::translate(model, glm::vec3(-8.0f, -7.5f, 5.1f));
+    model = glm::translate(model, glm::vec3(-8.0f, -7.7f, 0.0f));
 
     // update animation variables
     m_queenTranslation += ANIMATION_SPEED * m_queenSpeedFactor * m_deltaTime;
