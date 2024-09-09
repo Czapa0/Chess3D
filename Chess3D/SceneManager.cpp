@@ -671,8 +671,8 @@ void SceneManager::renderSkybox()
     glViewport(0, 0, m_width, m_height);
     m_skyboxShader.use();
 
-    glm::mat4 view = glm::mat4(glm::mat3(m_freeRoamCamera.GetViewMatrix()));
-    glm::mat4 projection = glm::perspective(glm::radians(m_freeRoamCamera.Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
+    glm::mat4 view = glm::mat4(glm::mat3(m_activeCamera->GetViewMatrix()));
+    glm::mat4 projection = glm::perspective(glm::radians(m_activeCamera->Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
 
     m_skyboxShader.setMat4("view", view);
     m_skyboxShader.setMat4("projection", projection);
