@@ -69,6 +69,9 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="Bezier.h">
+      <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
