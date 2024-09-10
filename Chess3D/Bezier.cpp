@@ -1,9 +1,12 @@
 #include "Bezier.h"
 
-Bezier::Bezier(std::vector<glm::vec3> corners, glm::vec3 color) : color(color) {
+#include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
 
-	controlPoints.reserve(16);
-	controlPointVelocities.reserve(16);
+Bezier::Bezier(std::vector<glm::vec3> corners, glm::vec3 color) : color(color), vertexCount(16), model(1.0f) {
+
+	controlPoints.reserve(vertexCount);
+	controlPointVelocities.reserve(vertexCount);
 
 	glm::vec3 top_left = corners[0];
 	glm::vec3 bottom_right = corners[1];
@@ -24,6 +27,22 @@ Bezier::Bezier(std::vector<glm::vec3> corners, glm::vec3 color) : color(color) {
 			);
 		}
 	}
+
+	// model matrix
+	model = glm::scale(model, glm::vec3(3.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -0.01f, 0.0f));
+	model = glm::rotate(model, glm::radians(-135.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// init VAO and VBO
+	glCreateBuffers(1, &VBO);
+	glCreateVertexArrays(1, &VAO);
+	glVertexArrayVertexBuffer(VAO, 0, VBO, 0, 3 * sizeof(float));
+	glNamedBufferStorage(
+		VBO, vertexCount * 4 * 3, NULL, GL_DYNAMIC_STORAGE_BIT
+	);
+	glEnableVertexArrayAttrib(VAO, 0);
+	glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribBinding(VAO, 0, 0);
 }
 
 glm::vec3 Bezier::TensionFromNeighbour(int x, int y, glm::vec3 position) {
@@ -67,4 +86,20 @@ void Bezier::Update(float dt) {
 		}
 	}
 
+}
+
+void Bezier::Draw(Shader& shader)
+{
+	std::vector<float> vertices;
+	vertices.reserve(3 * vertexCount);
+	for (glm::vec3 vertex : controlPoints) {
+		vertices.push_back(vertex.x);
+		vertices.push_back(vertex.y);
+		vertices.push_back(vertex.z);
+	}
+	glPatchParameteri(GL_PATCH_VERTICES, vertexCount);
+	glNamedBufferSubData(VBO, 0, vertices.size() * sizeof(float), vertices.data());
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_PATCHES, 0, vertexCount);
+	glBindVertexArray(0);
 }

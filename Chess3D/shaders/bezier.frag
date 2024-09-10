@@ -22,13 +22,13 @@ void main()
     //ambient
     vec3 temp = 0.2 * tint;
 
-    //lighting
-    for (int i = 0; i < 8; i++) {
-        temp += calculatePointLight(i);
-    }
+//    //lighting
+//    for (int i = 0; i < 8; i++) {
+//        temp += calculatePointLight(i);
+//    }
 
     finalColor = vec4(temp, 1.0);
-    //finalColor = vec4(tint, 1.0);
+    finalColor = vec4(tint, 1.0);
 
 }
 

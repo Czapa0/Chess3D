@@ -387,6 +387,12 @@ int SceneManager::arrange() {
     }
     m_skybox.setupSkybox();
 
+    std::vector<glm::vec3> corners = { {
+        glm::vec3(-0.78f, 0.55f, 0.0f),
+        glm::vec3(1.3f, -0.95f, 0.0f),
+    } };
+    m_bezier = Bezier(corners, glm::vec3(0.5, 0.25, 0.5));
+
     return 0;
 }
 
@@ -418,6 +424,7 @@ int SceneManager::run() {
         animateBlackQueen();
         animateSun();
         animateMoon();
+        m_bezier.Update(10 * m_deltaTime);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -443,6 +450,7 @@ int SceneManager::run() {
         glCullFace(GL_BACK);
 
         renderScene();
+        renderBezier();
         renderSkybox();
         renderUI();
 
@@ -664,6 +672,27 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
     for (Model& pawn : m_blackPawns) {
         pawn.Draw(shader, renderMode);
     }
+}
+
+void SceneManager::renderBezier()
+{
+    glViewport(0, 0, m_width, m_height);
+    glDisable(GL_CULL_FACE);
+
+    m_bezierShader.use();
+    
+    glm::mat4 projection = glm::perspective(glm::radians(m_activeCamera->Zoom), (float)m_width / (float)m_height, 0.1f, 100.0f);
+    glm::mat4 view = m_activeCamera->GetViewMatrix();
+    m_bezierShader.setMat4("model", m_bezier.model);
+    m_bezierShader.setMat4("view", view);
+    m_bezierShader.setMat4("projection", projection);
+
+    m_bezierShader.setFloat("detail", 40);
+    m_bezierShader.setVec3("tint", m_bezier.color);
+
+    m_bezier.Draw(m_bezierShader);
+
+    glEnable(GL_CULL_FACE);
 }
 
 void SceneManager::renderSkybox()

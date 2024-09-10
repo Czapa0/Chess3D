@@ -143,6 +143,8 @@ private:
 
 	Skybox m_skybox;
 
+	Bezier m_bezier;
+
 	// === METHODS ===
 	// init
 	int arrange();
@@ -162,6 +164,7 @@ private:
 	void renderUI();
 	void renderScene();
 	void renderModels(Shader& shader, RenderType renderMode = RenderType::Everything);
+	void renderBezier();
 	void renderSkybox();
 	// animation
 	void animateBlackQueen();
