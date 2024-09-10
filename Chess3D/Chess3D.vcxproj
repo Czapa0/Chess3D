@@ -158,6 +158,10 @@
     <ClInclude Include="WindowMode.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\bezier.frag" />
+    <None Include="shaders\bezier.tesc" />
+    <None Include="shaders\bezier.tese" />
+    <None Include="shaders\bezier.vert" />
     <None Include="shaders\depth.frag" />
     <None Include="shaders\depth.vert" />
     <None Include="shaders\depthSL.frag" />

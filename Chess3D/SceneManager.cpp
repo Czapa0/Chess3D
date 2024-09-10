@@ -365,6 +365,7 @@ int SceneManager::arrange() {
     m_depthShader = Shader("shaders/depth.vert", "shaders/depth.frag");
     m_depthShader_SL = Shader("shaders/depthSL.vert", "shaders/depthSL.frag");
     m_skyboxShader = Shader("shaders/skybox.vert", "shaders/skybox.frag");
+    m_bezierShader = Shader("shaders/bezier.vert", "shaders/bezier.frag", "shaders/bezier.tesc", "shaders/bezier.tese");
 
     // === DATA ===
     if (loadModels()) {

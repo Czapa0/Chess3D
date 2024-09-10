@@ -150,5 +150,17 @@
     <None Include="shaders\depthSL.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\bezier.tesc">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\bezier.tese">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\bezier.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\bezier.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

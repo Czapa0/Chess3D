@@ -24,6 +24,7 @@ constexpr float MOON_ROTATION = 5.0;
 #include "Light.h"
 #include "Callbacks.h"
 #include "Skybox.h"
+#include "Bezier.h"
 
 class SceneManager
 {
@@ -45,6 +46,7 @@ private:
 	Shader m_depthShader;
 	Shader m_depthShader_SL;
 	Shader m_skyboxShader;
+	Shader m_bezierShader;
 
 	// === LIGHTS & MATERIAL ===
 	bool m_pointLightsActive = true;
