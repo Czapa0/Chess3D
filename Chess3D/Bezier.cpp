@@ -25,3 +25,46 @@ Bezier::Bezier(std::vector<glm::vec3> corners, glm::vec3 color) : color(color) {
 		}
 	}
 }
+
+glm::vec3 Bezier::TensionFromNeighbour(int x, int y, glm::vec3 position) {
+
+	glm::vec3 otherPosition = controlPoints[x + 4 * y];
+
+	return otherPosition - position;
+}
+
+void Bezier::Update(float dt) {
+
+	//For internal points:
+
+	for (int x = 1; x < 3; ++x) {
+		for (int y = 1; y < 3; ++y) {
+
+			glm::vec3 net_force = glm::vec3(0.0f, 0.0f, -0.0025f);
+
+			glm::vec3 position = controlPoints[x + 4 * y];
+
+			glm::vec3 tension = TensionFromNeighbour(x - 1, y - 1, position);
+			tension += TensionFromNeighbour(x, y - 1, position);
+			tension += TensionFromNeighbour(x + 1, y - 1, position);
+			tension += TensionFromNeighbour(x - 1, y, position);
+			tension += TensionFromNeighbour(x + 1, y, position);
+			tension += TensionFromNeighbour(x - 1, y + 1, position);
+			tension += TensionFromNeighbour(x, y + 1, position);
+			tension += TensionFromNeighbour(x + 1, y + 1, position);
+			net_force += 0.0002f * tension;
+
+			controlPointVelocities[x + 4 * y] += dt * net_force;
+		}
+	}
+
+
+	for (int x = 1; x < 3; ++x) {
+		for (int y = 1; y < 3; ++y) {
+
+			controlPoints[x + 4 * y] += dt * controlPointVelocities[x + 4 * y];
+
+		}
+	}
+
+}
