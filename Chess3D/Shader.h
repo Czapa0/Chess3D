@@ -17,7 +17,9 @@ public:
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
     Shader() = default;
-    Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+    Shader(
+        const char* vertexPath, const char* fragmentPath, const char* tcsPath = nullptr, 
+        const char* tesPath = nullptr, const char* geometryPath = nullptr);
     // activate the shader
     // ------------------------------------------------------------------------
     void use();

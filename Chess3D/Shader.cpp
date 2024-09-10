@@ -1,16 +1,24 @@
 #include "Shader.h"
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
+Shader::Shader(
+    const char* vertexPath, const char* fragmentPath, const char* tcsPath,
+    const char* tesPath, const char* geometryPath) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
+    std::string tcsCode;
+    std::string tesCode;
     std::string geometryCode;
     std::ifstream vShaderFile;
     std::ifstream fShaderFile;
+    std::ifstream tcsShaderFile;
+    std::ifstream tesShaderFile;
     std::ifstream gShaderFile;
     // ensure ifstream objects can throw exceptions:
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    tcsShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    tesShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
         // open files
@@ -26,6 +34,22 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
         // convert stream into string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
+        // if tcs shader path is present, also load a geometry shader
+        if (tcsPath != nullptr) {
+            tcsShaderFile.open(tcsPath);
+            std::stringstream tcsShaderStream;
+            tcsShaderStream << tcsShaderFile.rdbuf();
+            tcsShaderFile.close();
+            tcsCode = tcsShaderStream.str();
+        }
+        // if tes shader path is present, also load a geometry shader
+        if (tesPath != nullptr) {
+            tesShaderFile.open(tesPath);
+            std::stringstream tesShaderStream;
+            tesShaderStream << tesShaderFile.rdbuf();
+            tesShaderFile.close();
+            tesCode = tesShaderStream.str();
+        }
         // if geometry shader path is present, also load a geometry shader
         if (geometryPath != nullptr) {
             gShaderFile.open(geometryPath);
@@ -52,6 +76,24 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
+    // if tcs shader is given, compile geometry shader
+    unsigned int tcs;
+    if (tcsPath != nullptr) {
+        const char* tcsShaderCode = tcsCode.c_str();
+        tcs = glCreateShader(GL_TESS_CONTROL_SHADER);
+        glShaderSource(tcs, 1, &tcsShaderCode, NULL);
+        glCompileShader(tcs);
+        checkCompileErrors(tcs, "TCS");
+    }
+    // if tes shader is given, compile geometry shader
+    unsigned int tes;
+    if (tesPath != nullptr) {
+        const char* tesShaderCode = tesCode.c_str();
+        tes = glCreateShader(GL_TESS_EVALUATION_SHADER);
+        glShaderSource(tes, 1, &tesShaderCode, NULL);
+        glCompileShader(tes);
+        checkCompileErrors(tes, "TES");
+    }
     // if geometry shader is given, compile geometry shader
     unsigned int geometry;
     if (geometryPath != nullptr) {
@@ -65,6 +107,12 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
+    if (tcsPath != nullptr) {
+        glAttachShader(ID, tcs);
+    }
+    if (tesPath != nullptr) {
+        glAttachShader(ID, tes);
+    }
     if (geometryPath != nullptr) {
         glAttachShader(ID, geometry);
     }
@@ -73,6 +121,12 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+    if (tcsPath != nullptr) {
+        glDeleteShader(tcs);
+    }
+    if (tesPath != nullptr) {
+        glDeleteShader(tes);
+    }
     if (geometryPath != nullptr) {
         glDeleteShader(geometry);
     }
