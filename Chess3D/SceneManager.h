@@ -8,6 +8,7 @@ constexpr float MOON_ROTATION = 5.0;
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -144,6 +145,7 @@ private:
 	Skybox m_skybox;
 
 	Bezier m_bezier;
+	bool m_bezierActive = true;
 
 	// === METHODS ===
 	// init

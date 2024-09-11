@@ -353,6 +353,13 @@ void SceneManager::renderUI()
     ImGui::Checkbox("Spot Lights", &m_spotLightsActive);
     ImGui::Checkbox("Day & Night", &m_dayNightActive);
     ImGui::EndGroup();
+    ImGui::Separator();
+
+    ImGui::BeginGroup();
+    ImGui::Text("Bezier Surface");
+    ImGui::Checkbox("Active##bezier", &m_bezierActive);
+    ImGui::ColorEdit3("Color###bezier", glm::value_ptr(m_bezier.color));
+    ImGui::EndGroup();
 
     ImGui::End();
 }
@@ -424,7 +431,7 @@ int SceneManager::run() {
         animateBlackQueen();
         animateSun();
         animateMoon();
-        m_bezier.Update(10 * m_deltaTime);
+        if (m_bezierActive) m_bezier.Update(10 * m_deltaTime);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -450,7 +457,7 @@ int SceneManager::run() {
         glCullFace(GL_BACK);
 
         renderScene();
-        renderBezier();
+        if (m_bezierActive) renderBezier();
         renderSkybox();
         renderUI();
 
@@ -677,7 +684,6 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 void SceneManager::renderBezier()
 {
     glViewport(0, 0, m_width, m_height);
-    //glDisable(GL_CULL_FACE);
 
     m_bezierShader.use();
     
@@ -687,7 +693,7 @@ void SceneManager::renderBezier()
     m_bezierShader.setMat4("view", view);
     m_bezierShader.setMat4("projection", projection);
 
-    m_bezierShader.setFloat("detail", 40);
+    m_bezierShader.setFloat("detail", 256);
     m_bezierShader.setVec3("tint", m_bezier.color);
 
     // camera
@@ -722,8 +728,6 @@ void SceneManager::renderBezier()
     m_bezierShader.setBool("dayNightActive", m_dayNightActive);
 
     m_bezier.Draw(m_bezierShader);
-
-    //glEnable(GL_CULL_FACE);
 }
 
 void SceneManager::renderSkybox()
