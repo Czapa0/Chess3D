@@ -161,7 +161,7 @@ private:
 	void renderSpotlightDepthMap(const SpotLight& light);
 	void renderSunDepthMap(const DirectionalLight& light);
 	void renderMoonDepthMap(const DirectionalLight& light);
-	// cmaera
+	// camera
 	void moveCamera();
 	// scene rendering
 	void renderUI();
