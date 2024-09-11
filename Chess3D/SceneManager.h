@@ -146,6 +146,7 @@ private:
 
 	Bezier m_bezier;
 	bool m_bezierActive = true;
+	int m_bezierTesselataion = 128;
 
 	// === METHODS ===
 	// init

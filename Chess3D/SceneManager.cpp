@@ -328,7 +328,7 @@ void SceneManager::renderUI()
 
     ImGui::BeginGroup();
     ImGui::Text("Camera");
-    if (ImGui::RadioButton("Free roam", m_cameraType == CameraType::FreeRoam)) {
+    if (ImGui::RadioButton("Fly Cam", m_cameraType == CameraType::FreeRoam)) {
         m_cameraType = CameraType::FreeRoam;
         m_activeCamera = &m_freeRoamCamera;
     }
@@ -358,6 +358,7 @@ void SceneManager::renderUI()
     ImGui::BeginGroup();
     ImGui::Text("Bezier Surface");
     ImGui::Checkbox("Active##bezier", &m_bezierActive);
+    ImGui::SliderInt("Tesselation##bezier", &m_bezierTesselataion, 16, 512);
     ImGui::ColorEdit3("Color###bezier", glm::value_ptr(m_bezier.color));
     ImGui::EndGroup();
 
@@ -693,7 +694,7 @@ void SceneManager::renderBezier()
     m_bezierShader.setMat4("view", view);
     m_bezierShader.setMat4("projection", projection);
 
-    m_bezierShader.setFloat("detail", 256);
+    m_bezierShader.setFloat("detail", m_bezierTesselataion);
     m_bezierShader.setVec3("tint", m_bezier.color);
 
     // camera
