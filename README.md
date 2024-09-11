@@ -2,7 +2,7 @@
 
 ## Installing
 For the project to work additional packages shall be installed (preferably using vcpkg):
-`vcpkg install glfw3 glad[gl-api-41,loader] glm assimp imgui[glfw-binding,opengl3-binding] stb``
+`vcpkg install glfw3 glad[gl-api-45,loader] glm assimp imgui[glfw-binding,opengl3-binding] stb``
 
 ## Camera movement
 To operate camera WSAD shall be used for up-down and left-right movement. Additionally, SHIFT may be used to move with higher speed.
