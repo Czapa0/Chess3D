@@ -55,8 +55,9 @@ int SceneManager::init() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(messageCallback, 0);
+    // for debugging
+    //glEnable(GL_DEBUG_OUTPUT);
+    //glDebugMessageCallback(messageCallback, 0);
 
     return arrange();
 }
@@ -66,19 +67,19 @@ int SceneManager::loadModels() {
     model = glm::scale(model, glm::vec3(0.1));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     // === CHESSBOARD ===
-    m_chessBoard = Model("models/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/Stone_Chess_Board_v1_L3.123c4360d402-eec2-4a3a-854b-0ad9ae539388/12951_Stone_Chess_Board_v1_L3.obj", RenderType::Static, model);
+    m_chessBoard = Model("models/Stone_Chess_Board/12951_Stone_Chess_Board_v1_L3.obj", RenderType::Static, model);
     m_chessBoard.modelMatrix = glm::translate(m_chessBoard.modelMatrix, glm::vec3(0.0f, 0.0f, 0.5f));
 
     // === WHITE KING ===
-    m_whiteKing = Model("models/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/Stone_Chess_King_Side_A_v2_L1.123cb493df42-46f1-49ef-8c89-479187ab8a22/12939_Stone_Chess_King_Side_A_V2_l1.obj", RenderType::Static, model);
+    m_whiteKing = Model("models/Stone_Chess_King_Side_A/12939_Stone_Chess_King_Side_A_V2_l1.obj", RenderType::Static, model);
     m_whiteKing.modelMatrix = glm::translate(m_whiteKing.modelMatrix, glm::vec3(10.7f, -0.6f, 0.0f));
 
     // === WHITE QUEEN ===
-    m_whiteQueen = Model("models/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/Stone_Chess_Queen_Side_A_v2_L1.123ca8f563ae-8402-4fcd-b919-9d6c85add86d/12940_Stone_Chess_Queen_Side_A_V2_l1.obj", RenderType::Static, model);
+    m_whiteQueen = Model("models/Stone_Chess_Queen_Side_A/12940_Stone_Chess_Queen_Side_A_V2_l1.obj", RenderType::Static, model);
     m_whiteQueen.modelMatrix = glm::translate(m_whiteQueen.modelMatrix, glm::vec3(16.1f, 21.2f, 0.0f));
 
     // === WHITE ROOKS ===
-    Model wr("models/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/Stone_Chess_Rook_Side_A_v2_L1.123c700a78d6-9c36-43d8-94ef-18b0f9bdbf3d/12941_Stone_Chess_Rook_Side_A_V2_l1.obj", RenderType::Static, model);
+    Model wr("models/Stone_Chess_Rook_Side_A/12941_Stone_Chess_Rook_Side_A_V2_l1.obj", RenderType::Static, model);
     for (Model& m : m_whiteRooks) {
         m = wr;
     }
@@ -86,7 +87,7 @@ int SceneManager::loadModels() {
     m_whiteRooks[1].modelMatrix = glm::translate(m_whiteRooks[1].modelMatrix, glm::vec3(11.1f, 21.6f, 0.0f));
 
     // === WHITE PAWNS ===
-    Model wp("models/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/Stone_Chess_Pawn_Side_A_v2_L3.123c0f81bc65-2846-45af-9512-6e41230dea09/12944_Stone_Chess_Pawn_Side_A_V2_L3.obj", RenderType::Static, model);
+    Model wp("models/Stone_Chess_Pawn_Side_A/12944_Stone_Chess_Pawn_Side_A_V2_L3.obj", RenderType::Static, model);
     for (Model& m : m_whitePawns) {
         m = wp;
     }
@@ -97,15 +98,15 @@ int SceneManager::loadModels() {
     m_whitePawns[4].modelMatrix = glm::translate(m_whitePawns[4].modelMatrix, glm::vec3(37.8f, -0.2f, 0.0f));
 
     // === BLACK KING ===
-    m_blackKing = Model("models/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/Stone_Chess_King_Side_B_v2_L1.123c481d677b-5169-455e-bf04-675a07aaa9aa/12945_Stone_Chess_King_Side_B_v2_l1.obj", RenderType::Static, model);
+    m_blackKing = Model("models/Stone_Chess_King_Side_B/12945_Stone_Chess_King_Side_B_v2_l1.obj", RenderType::Static, model);
     m_blackKing.modelMatrix = glm::translate(m_blackKing.modelMatrix, glm::vec3(10.7f, 0.0f, 0.0f));
 
     // === BLACK QUEEN ===
-    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/Stone_Chess_Queen_Side_B_v2_L1.123c4dd4d516-7f3e-4b9a-abc1-a2acb1d7ceff/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", RenderType::Dynamic, model);
+    m_blackQueen = Model("models/Stone_Chess_Queen_Side_B/12946_Stone_Chess_Queen_Side_B_V2_l1.obj", RenderType::Dynamic, model);
     m_blackQueen.modelMatrix = glm::translate(m_blackQueen.modelMatrix, glm::vec3(-8.0f, -7.5f, 0.0f));
 
     // == BLACK ROOKS ===
-    Model br("models/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/Stone_Chess_Rook_Side_B_v2_L1.123c00b55eba-db8e-49e1-8930-92b018c0ef95/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", RenderType::Static, model);
+    Model br("models/Stone_Chess_Rook_Side_B/12947_Stone_Chess_Rook_Side_B_v2_l1.obj", RenderType::Static, model);
     for (Model& m : m_blackRooks) {
         m = br;
     }
@@ -113,12 +114,12 @@ int SceneManager::loadModels() {
     m_blackRooks[1].modelMatrix = glm::translate(m_blackRooks[1].modelMatrix, glm::vec3(-0.3f, -27.5f, 0.0f));
 
     // === BLACK KNIGHT ===
-    m_blackKnight = Model("models/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/Stone_Chess_Knight_Side_B_v2_L1.123c5e1267f2-c8bc-4f6e-ac1d-b15c2c660b6e/12949_Stone_Chess_Knight_Side_B_V2_l1.obj", RenderType::Static, model);
+    m_blackKnight = Model("models/Stone_Chess_Knight_Side_B/12949_Stone_Chess_Knight_Side_B_V2_l1.obj", RenderType::Static, model);
     m_blackKnight.modelMatrix = glm::scale(m_blackKnight.modelMatrix, glm::vec3(0.8));
     m_blackKnight.modelMatrix = glm::translate(m_blackKnight.modelMatrix, glm::vec3(-17.0f, -22.5f, 0.0f));
 
     // === BLACK PAWNS ===
-    Model bp("models/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/Stone_Chess_Pawn_Side_B_v2_L3.123c116cc629-4730-45fd-a530-a8d93427dc2f/12950_Stone_Chess_Pawn_Side_B_v2_l3.obj", RenderType::Static, model);
+    Model bp("models/Stone_Chess_Pawn_Side_B/12950_Stone_Chess_Pawn_Side_B_v2_l3.obj", RenderType::Static, model);
     for (Model& m : m_blackPawns) {
         m = bp;
     }
