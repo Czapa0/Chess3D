@@ -1,47 +1,61 @@
 #version 450 core
 
-struct PointLight {
-    vec3 position;
-    vec3 color;
-    float strength;
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
 };
+uniform Material material;
+
+struct DirLight {
+    vec3 color;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 direction;
+};
+uniform DirLight sun;
+uniform DirLight moon;
+uniform bool dayNightActive;
+
+uniform vec3 tint;
+
+uniform vec3 cameraPos;
+
+uniform bool fogActive;
+uniform vec3 fogColor;
+uniform float fogIntensity;
 
 in vec4 fragmentPosition;
 in vec3 fragmentNormal;
 
-uniform PointLight[8] lights;
-uniform vec3 tint;
-
 out vec4 finalColor;
 
-vec3 calculatePointLight(int i);
+vec3 CalcDirLight(DirLight light, vec3 V, vec3 N);
 
 void main()
 {
-  
-    //ambient
-    vec3 temp = 0.2 * tint;
-
-//    //lighting
-//    for (int i = 0; i < 8; i++) {
-//        temp += calculatePointLight(i);
-//    }
-
-    finalColor = vec4(temp, 1.0);
-    finalColor = vec4(tint, 1.0);
-
+    vec3 V = normalize(cameraPos - vec3(fragmentPosition));
+    vec3 color = vec3(0, 0, 0);
+    if (dayNightActive) {
+        // sun
+        color += CalcDirLight(sun, V, fragmentNormal);
+    
+        // moon
+        color += CalcDirLight(moon, V, fragmentNormal);
+    }
+    finalColor = clamp(vec4(color, 1.0), 0, 1);
 }
 
-vec3 calculatePointLight(int i) {
+vec3 CalcDirLight(DirLight light, vec3 V, vec3 N) {
+    vec3 L = -normalize(light.direction);
+    float cosNL = max(dot(N, L), 0.0);
+    vec3 R = 2 * dot(N, L) * N - L;
+    float cosVRn = cosNL > 0.0 ? pow(max(dot(V, R), 0.0), material.shininess) : 0.0;
 
-    //geometric data
-    vec3 fragmentLight = normalize(lights[i].position - vec3(fragmentPosition));
-    
-    // get lighting level
-    float level = max(0.0, dot(fragmentNormal, fragmentLight));
-    // quantize the level into, say, 4 levels
-    level = floor(level * 2) / 2.0;
-    vec3 result = lights[i].color * tint * level;
-
-    return result;
+    vec3 ambient = light.ambient * material.ambient;
+    vec3 diffuse = cosNL * light.diffuse * material.diffuse;
+    vec3 specular = cosVRn * light.specular * material.specular;
+    return light.color * (ambient + diffuse + specular) * tint;
 }

@@ -677,7 +677,7 @@ void SceneManager::renderModels(Shader& shader, RenderType renderMode)
 void SceneManager::renderBezier()
 {
     glViewport(0, 0, m_width, m_height);
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
 
     m_bezierShader.use();
     
@@ -690,9 +690,40 @@ void SceneManager::renderBezier()
     m_bezierShader.setFloat("detail", 40);
     m_bezierShader.setVec3("tint", m_bezier.color);
 
+    // camera
+    m_bezierShader.setVec3("cameraPos", m_activeCamera->Position);
+
+    // fog
+    m_bezierShader.setFloat("fogIntensity", m_fogIntensity);
+    float col = 1.0 * m_fogColor / 255;
+    m_bezierShader.setVec3("fogColor", glm::vec3(col, col, col));
+    m_bezierShader.setBool("fogActive", m_fogActive);
+
+    // material
+    m_bezierShader.setVec3("material.ambient", m_chessBoard.material.ambient);
+    m_bezierShader.setVec3("material.diffuse", m_chessBoard.material.diffuse);
+    m_bezierShader.setVec3("material.specular", m_chessBoard.material.specular);
+    m_bezierShader.setFloat("material.shininess", m_chessBoard.material.shininess);
+
+    // sun
+    m_bezierShader.setVec3("sun.ambient", m_sun.ambient);
+    m_bezierShader.setVec3("sun.diffuse", m_sun.diffuse);
+    m_bezierShader.setVec3("sun.specular", m_sun.specular);
+    m_bezierShader.setVec3("sun.direction", m_sun.direction);
+    m_bezierShader.setVec3("sun.color", m_sunColor);
+
+    // moon
+    m_bezierShader.setVec3("moon.ambient", m_moon.ambient);
+    m_bezierShader.setVec3("moon.diffuse", m_moon.diffuse);
+    m_bezierShader.setVec3("moon.specular", m_moon.specular);
+    m_bezierShader.setVec3("moon.direction", m_moon.direction);
+    m_bezierShader.setVec3("moon.color", m_moonColor);
+
+    m_bezierShader.setBool("dayNightActive", m_dayNightActive);
+
     m_bezier.Draw(m_bezierShader);
 
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 }
 
 void SceneManager::renderSkybox()
