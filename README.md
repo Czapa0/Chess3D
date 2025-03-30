@@ -9,8 +9,11 @@ Chess3D is an animation developed in C++ with OpenGL. This project is a base for
 
 ## Fog
 Custom fog system is implemented via shaders.
+
 <p align="center">
-  <img src="./Doc/Images/Fog.gif" alt="Fog" />
+  <img src="./Doc/Images/Fog.gif" style="width: 100%; max-width: 1200px;">
+  <br>
+  <b>Fog</b>
 </p>
 
 ## Camera
@@ -53,7 +56,7 @@ Custom implementation of different light types:
 Added shadow calculation for all light types which include additional render passes for all lights.
 
 <p align="center">
-  <img src="./Doc/Images/Shadows.gif" style="width: 100%; max-width: 800px;">
+  <img src="./Doc/Images/Shadows.gif" style="width: 100%; max-width: 1200px;">
   <br>
   <b>Shadows</b>
 </p>
