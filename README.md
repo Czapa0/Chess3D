@@ -20,24 +20,24 @@ Custom fog system is implemented via shaders.
 - Following Camera - set to follow moving piece,
 - First Person Camera - attatched to moving piece.
 
-<table>
+<table width="100%" style="border-collapse: collapse;">
   <tr>
-    <td align="center">
-      <img src="./Doc/Images/FlyCam.gif" width="150"><br>
+    <td align="center" width="50%">
+      <img src="./Doc/Images/FlyCam.gif" style="width: 100%; max-width: 200px;"><br>
       <b>Fly Camera</b>
     </td>
-    <td align="center">
-      <img src="./Doc/Images/StaticCam.gif" width="150"><br>
+    <td align="center" width="50%">
+      <img src="./Doc/Images/StaticCam.gif" style="width: 100%; max-width: 200px;"><br>
       <b>Static Camera</b>
     </td>
   </tr>
   <tr>
-    <td align="center">
-      <img src="./Doc/Images/FollowCam.gif" width="150"><br>
+    <td align="center" width="50%">
+      <img src="./Doc/Images/FollowCam.gif" style="width: 100%; max-width: 200px;"><br>
       <b>Follow Camera</b>
     </td>
-    <td align="center">
-      <img src="./Doc/Images/FPCam.gif" width="150"><br>
+    <td align="center" width="50%">
+      <img src="./Doc/Images/FPCam.gif" style="width: 100%; max-width: 200px;"><br>
       <b>First Person Camera</b>
     </td>
   </tr>
