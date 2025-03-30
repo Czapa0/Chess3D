@@ -22,20 +22,24 @@ Custom fog system is implemented via shaders.
 
 <p align="center">
   <img src="./Doc/Images/FlyCam.gif" alt="Fog" />
+
   Fly Cam
 </p>
 
 <p align="center">
   <img src="./Doc/Images/StaticCam.gif" alt="StaticCam" />
+
   Static Cam
 </p>
 
 <p align="center">
   <img src="./Doc/Images/FollowCam.gif" alt="FollowCam" />
+
   Follow Cam
 
 <p align="center">
   <img src="./Doc/Images/FPCam.gif" alt="FPCam" />
+  
   First Person Cam
 </p>
 
