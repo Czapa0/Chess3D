@@ -1,4 +1,17 @@
 # Chess3D
+Chess3D is an animation developed in C++ with OpenGL. This project is a base for analysing and implementing various Computer Graphics algorithms.
+
+## Shading
+3 types of shading based on Phong illumiantion model are availbale via shaders:
+- flat shading,
+- Gouraud shading,
+- Phong shading.
+
+## Fog
+Custom fog system is implemented via shaders.
+<p align="center">
+  <img src="./Doc/Images/Fog.gif" alt="Fog" />
+</p>
 
 ## Installing
 For the project to work additional packages shall be installed (preferably using vcpkg):
