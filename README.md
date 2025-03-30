@@ -20,20 +20,30 @@ Custom fog system is implemented via shaders.
 - Following Camera - set to follow moving piece,
 - First Person Camera - attatched to moving piece.
 
-<p align="center">
-  <img src="./Doc/Images/FlyCam.gif" alt="Fog" title="Fly Cam" />
-</p>
+<table>
+  <tr>
+    <td align="center">
+      <img src="./Doc/Images/FlyCam.gif" width="150"><br>
+      <b>Fly Camera</b>
+    </td>
+    <td align="center">
+      <img src="./Doc/Images/StaticCam.gif" width="150"><br>
+      <b>Static Camera</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./Doc/Images/FollowCam.gif" width="150"><br>
+      <b>Follow Camera</b>
+    </td>
+    <td align="center">
+      <img src="./Doc/Images/FPCam.gif" width="150"><br>
+      <b>First Person Camera</b>
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <img src="./Doc/Images/StaticCam.gif" alt="StaticCam" title="Static Cam/>
-</p>
 
-<p align="center">
-  <img src="./Doc/Images/FollowCam.gif" alt="FollowCam" title="Follow Cam" />
-
-<p align="center">
-  <img src="./Doc/Images/FPCam.gif" alt="FPCam" title="First Person Cam"/>
-</p>
 
 ## Installing
 For the project to work additional packages shall be installed (preferably using vcpkg):
