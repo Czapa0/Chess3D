@@ -61,6 +61,14 @@ Added shadow calculation for all light types which include additional render pas
   <b>Shadows</b>
 </p>
 
+## Bezier surface
+Bezier surface with tesselation shaders to add more geometry.
+
+<p align="center">
+  <img src="./Doc/Images/Bezier.gif" style="width: 100%; max-width: 1200px;">
+  <br>
+  <b>Bezier surface</b>
+</p>
 
 ## Installing
 For the project to work additional packages shall be installed (preferably using vcpkg):
