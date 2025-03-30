@@ -43,6 +43,20 @@ Custom fog system is implemented via shaders.
   </tr>
 </table>
 
+## Lights
+Custom implementation of different light types:
+- point lights,
+- directional lights,
+- spotlights.
+
+## Shadows
+Added shadow calculation for all light types which include additional render passes for all lights.
+
+<p align="center">
+  <img src="./Doc/Images/Shadows.gif" style="width: 100%; max-width: 800px;">
+  <br>
+  <b>Shadows</b>
+</p>
 
 
 ## Installing
