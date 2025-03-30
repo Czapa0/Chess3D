@@ -13,6 +13,32 @@ Custom fog system is implemented via shaders.
   <img src="./Doc/Images/Fog.gif" alt="Fog" />
 </p>
 
+## Camera
+3 types of camera are avilable:
+- Fly Camera - free flying around scene,
+- Static Camera - attatched to constant point,
+- Following Camera - set to follow moving piece,
+- First Person Camera - attatched to moving piece.
+
+<p align="center">
+  <img src="./Doc/Images/FlyCam.gif" alt="Fog" />
+  Fly Cam
+</p>
+
+<p align="center">
+  <img src="./Doc/Images/StaticCam.gif" alt="StaticCam" />
+  Static Cam
+</p>
+
+<p align="center">
+  <img src="./Doc/Images/FollowCam.gif" alt="FollowCam" />
+  Follow Cam
+
+<p align="center">
+  <img src="./Doc/Images/FPCam.gif" alt="FPCam" />
+  First Person Cam
+</p>
+
 ## Installing
 For the project to work additional packages shall be installed (preferably using vcpkg):
 `vcpkg install glfw3 glad[gl-api-45,loader] glm assimp imgui[glfw-binding,opengl3-binding] stb``
